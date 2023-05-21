@@ -1,12 +1,23 @@
 {
   "name": "hollofabrika",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon --inspect",
+    "build": "etsc"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "dependencies": {
+    "@apollo/server": "^4.7.1",
+    "@graphql-tools/load-files": "^7.0.0",
+    "@graphql-tools/merge": "^9.0.0",
+    "graphql": "^16.6.0",
+    "graphql-tools": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.1",
+    "cpy": "^10.1.0",
+    "esbuild": "^0.17.19",
+    "esbuild-node-tsc": "^2.0.5",
+    "nodemon": "^2.0.22",
+    "typescript": "^5.0.4"
+  }
 }
