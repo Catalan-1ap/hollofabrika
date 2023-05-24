@@ -2,22 +2,35 @@
   "name": "hollofabrika",
   "type": "module",
   "scripts": {
-    "start": "nodemon --inspect",
-    "build": "etsc"
+    "start": "nodemon src/index.ts",
+    "build": "etsc",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.7.1",
+    "@as-integrations/koa": "^1.0.0",
     "@graphql-tools/load-files": "^7.0.0",
     "@graphql-tools/merge": "^9.0.0",
+    "@koa/cors": "^4.0.0",
+    "@koa/router": "^12.0.0",
     "graphql": "^16.6.0",
-    "graphql-tools": "^9.0.0"
+    "koa": "^2.14.2",
+    "koa-bodyparser": "^4.4.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "3.3.1",
+    "@graphql-codegen/typescript": "3.0.4",
+    "@graphql-codegen/typescript-resolvers": "3.2.1",
+    "@types/koa": "^2.13.6",
+    "@types/koa-bodyparser": "^4.3.10",
+    "@types/koa__cors": "^4.0.0",
+    "@types/koa__router": "^12.0.0",
     "@types/node": "^20.2.1",
     "cpy": "^10.1.0",
     "esbuild": "^0.17.19",
     "esbuild-node-tsc": "^2.0.5",
     "nodemon": "^2.0.22",
+    "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   }
 }

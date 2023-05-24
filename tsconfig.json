@@ -5,9 +5,14 @@
     "moduleResolution": "NodeNext",
     "sourceMap": true,
     "strict": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "allowSyntheticDefaultImports": true,
   },
   "include": [
     "./src"
-  ]
+  ],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
 }

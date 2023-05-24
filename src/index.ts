@@ -1,33 +1,50 @@
 import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
-import { loadFilesSync } from "@graphql-tools/load-files";
-import { mergeTypeDefs } from "@graphql-tools/merge";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+import { koaMiddleware } from "@as-integrations/koa";
+import { loadFiles as toolsLoadFiles } from "@graphql-tools/load-files";
+import { mergeResolvers, mergeTypeDefs } from "@graphql-tools/merge";
+import cors from "@koa/cors";
+import Router from "@koa/router";
+import http from "http";
+import Koa from "koa";
+import bodyParser from "koa-bodyparser";
+import * as url from "url";
 
+function loadFilesSync(pattern: string) {
+	return toolsLoadFiles(pattern, {
+		requireMethod: async (path: string) => {
+			return await import(url.pathToFileURL(path).toString());
+		}
+	})
+}
 
-const schemaFilesPattern = "./src/schemas/*.graphql";
-const schemaFiles = loadFilesSync(schemaFilesPattern);
-const mergedSchema = mergeTypeDefs(schemaFiles);
+const schemaFiles = await loadFilesSync("./src/features/**/*.schema.graphql");
+const typeDefs = mergeTypeDefs(schemaFiles);
+
+const queriesFiles = await loadFilesSync("./src/features/**/*.queries.ts");
+const mutationsFiles = await loadFilesSync("./src/features/**/*.mutations.ts");
+const resolvers = mergeResolvers([...queriesFiles, ...mutationsFiles])
+
+const app = new Koa();
+const router = new Router();
+const httpServer = http.createServer(app.callback());
 
 const server = new ApolloServer({
-	typeDefs: mergedSchema,
-	resolvers: {
-		Query: {
-			books: () => [
-				{
-					title: "The Awakening",
-				},
-				{
-					title: "City of Glass",
-				},
-			]
-		}
-	}
+	plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+	typeDefs: typeDefs,
+	resolvers: resolvers
 });
+await server.start();
 
-const { url } = await startStandaloneServer(server, {
-	listen: {
-		port: 3333
-	}
-});
+router.use(cors());
+router.use(bodyParser());
+router.post("/graphql", koaMiddleware(server, {
+	context: async ({ ctx }) => ({ token: ctx.headers.token }),
+}));
 
-console.log(`Server ready at ${url}`);
+app.use(router.routes());
+app.use(router.allowedMethods());
+
+const port = 3333;
+httpServer.listen(port)
+console.log(`Server ready at http://localhost:${port}`);
