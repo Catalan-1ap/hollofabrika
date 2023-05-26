@@ -1,0 +1,8 @@
+type Error {
+    code: ErrorCode!
+    message: String!
+}
+
+enum ErrorCode {
+    BadRequest
+}

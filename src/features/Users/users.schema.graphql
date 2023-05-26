@@ -1,0 +1,17 @@
+type Query {
+    users: [User]
+}
+
+type Mutation {
+    register(username: String!, email: String!, password: String!): Error
+}
+
+type User {
+    username: String!
+    email: String!
+}
+
+type JwtToken {
+    access: String!,
+    refresh: String!
+}
