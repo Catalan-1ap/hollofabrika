@@ -1,4 +1,6 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo } from "graphql";
+
+
 export type Maybe<T> = T | null | undefined;
 export type InputMaybe<T> = T | null | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -34,20 +36,24 @@ export type GqlMutation = {
 
 
 export type GqlMutationRegisterArgs = {
-  email: Scalars['String'];
-  password: Scalars['String'];
-  username: Scalars['String'];
+	email: Scalars["String"];
+	password: Scalars["String"];
+	username: Scalars["String"];
 };
 
 export type GqlQuery = {
-  users?: Maybe<Array<Maybe<GqlUser>>>;
+	users?: Maybe<Array<Maybe<GqlUser>>>;
 };
+
+export enum GqlRole {
+	Admin = "Admin",
+	Standalone = "Standalone"
+}
 
 export type GqlUser = {
-  email: Scalars['String'];
-  username: Scalars['String'];
+	email: Scalars["String"];
+	username: Scalars["String"];
 };
-
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -119,14 +125,15 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type GqlResolversTypes = {
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  Error: ResolverTypeWrapper<GqlError>;
-  ErrorCode: GqlErrorCode;
-  JwtToken: ResolverTypeWrapper<GqlJwtToken>;
-  Mutation: ResolverTypeWrapper<{}>;
-  Query: ResolverTypeWrapper<{}>;
-  String: ResolverTypeWrapper<Scalars['String']>;
-  User: ResolverTypeWrapper<GqlUser>;
+	Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
+	Error: ResolverTypeWrapper<GqlError>;
+	ErrorCode: GqlErrorCode;
+	JwtToken: ResolverTypeWrapper<GqlJwtToken>;
+	Mutation: ResolverTypeWrapper<{}>;
+	Query: ResolverTypeWrapper<{}>;
+	Role: GqlRole;
+	String: ResolverTypeWrapper<Scalars["String"]>;
+	User: ResolverTypeWrapper<GqlUser>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */

@@ -1,20 +1,30 @@
 import { aql } from "arangojs";
-import { DbUser } from "../../../infrastructure/dbTypes.js";
+import { DbRegisterTemporalToken, DbUser } from "../../../infrastructure/dbTypes.js";
 import { querySingle } from "../../../infrastructure/dbUtils.js";
 import { GqlErrorCode, GqlMutationResolvers, GqlUser } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
-import { getUsersCollection } from "../users.setup.js";
+import { mailSender } from "../../../infrastructure/mailSender.js";
+import { generateNumberToken, hashPassword } from "../users.services.js";
+import { getTemporalTokensCollection, getUsersCollection } from "../users.setup.js";
 
 
 export const registerMutation: GqlMutationResolvers<HollofabrikaContext>["register"] =
 	async (_, args, context) => {
 		const usersCollection = getUsersCollection(context.db);
+		const temporalTokensCollection = getTemporalTokensCollection(context.db);
 
 		const existed = await querySingle<DbUser>(context.db, aql`
-			return first(
-			    for doc in ${usersCollection}
-			    filter doc.username == ${args.username} or doc.email == ${args.email}
-			    return doc
+			return not_null(
+			    first(
+			        for doc in ${usersCollection}
+			        filter doc.username == ${args.username} or doc.email == ${args.email}
+			        return doc
+			    ),
+			    first(
+			        for doc in ${temporalTokensCollection}
+			        filter doc.username == ${args.username} or doc.email == ${args.email}
+			        return doc
+			    )
 			)
 		`);
 
@@ -34,39 +44,33 @@ export const registerMutation: GqlMutationResolvers<HollofabrikaContext>["regist
 					return {
 						code: GqlErrorCode.BadRequest,
 						message: field.message
-					}
+					};
 			}
 		}
 
-		const hash = await hashPassword(body.password);
-		const token = generateNumberToken();
-		await prisma.registerTokens.upsert({
-			create: {
-				token: token,
-				username: body.username,
-				email: body.email,
-				passwordHash: hash,
+		const hash = await hashPassword(args.password);
+
+		const registerTemporalToken: DbRegisterTemporalToken = {
+			type: "register",
+			token: generateNumberToken(),
+			payload: {
+				username: args.username,
+				email: args.email,
+				passwordHash: hash
 			},
-			update: {
-				token: token,
-				username: body.username,
-				email: body.email,
-				passwordHash: hash,
-			},
-			where: {
-				username: body.username
-			}
-		});
+		};
+		await temporalTokensCollection.save(registerTemporalToken);
+
 		await mailSender.sendMail({
 			from: process.env.GMAIL_MAIL,
 			subject: "Email Confirmation",
-			to: body.email,
+			to: args.email,
 			text: `
-Hello, ${body.username}!
-
-To verify your e-mail address, please use this key
-
-${token}
+				Hello, ${args.username}!
+				
+				To verify your e-mail address, please use this key
+				
+				${registerTemporalToken.token}
 			`
 		});
 	};

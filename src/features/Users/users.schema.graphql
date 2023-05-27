@@ -11,6 +11,11 @@ type User {
     email: String!
 }
 
+enum Role {
+    Standalone
+    Admin
+}
+
 type JwtToken {
     access: String!,
     refresh: String!

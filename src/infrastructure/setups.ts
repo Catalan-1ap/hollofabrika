@@ -14,7 +14,7 @@ export async function reflectionSetup() {
 			loadFilesSync("./src/features/**/*.mutations.ts")
 		]).then(z => z.flat()).then(mergeResolvers),
 		loadFilesSync("./src/features/**/*.setup.ts").then(setup)
-	]) as [];
+	]);
 
 	return {
 		typeDefs,
@@ -24,11 +24,11 @@ export async function reflectionSetup() {
 
 export function connectToDb() {
 	return arangojs({
-		url: process.env.ARANGO_URL,
-		databaseName: process.env.ARANGO_DB,
+		url: process.env.ARANGO_URL!,
+		databaseName: process.env.ARANGO_DB!,
 		auth: {
-			username: process.env.ARANGO_USER,
-			password: process.env.ARANGO_PASSWORD,
+			username: process.env.ARANGO_USER!,
+			password: process.env.ARANGO_PASSWORD!,
 		}
 	});
 }
