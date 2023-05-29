@@ -1,3 +1,5 @@
+util.inspect.defaultOptions.depth = 7;
+
 await import("dotenv").then(z => z.config());
 
 
@@ -9,6 +11,8 @@ import Router from "@koa/router";
 import http from "http";
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
+import util from "util";
+import { formatErrorHandler } from "./infrastructure/formatErrorHandler.js";
 import { contextHandler, HollofabrikaContext } from "./infrastructure/hollofabrikaContext.js";
 import { reflectionSetup } from "./infrastructure/setups.js";
 
@@ -22,19 +26,19 @@ const httpServer = http.createServer(app.callback());
 const server = new ApolloServer<HollofabrikaContext>({
 	plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 	typeDefs: typeDefs,
-	resolvers: resolvers
+	resolvers: resolvers,
+	formatError: formatErrorHandler,
+
 });
 await server.start();
 
 router.use(cors());
 router.use(bodyParser());
-router.post("/graphql", koaMiddleware<HollofabrikaContext>(server, {
+router.all("/graphql", koaMiddleware<HollofabrikaContext>(server, {
 	context: contextHandler
 }));
 
 app.use(router.routes());
-app.use(router.allowedMethods());
 
-const port = 3333;
-httpServer.listen(port);
-console.log(`Server ready at http://localhost:${port}`);
+httpServer.listen(process.env.SERVER_PORT);
+console.log(`Server ready at http://localhost:${process.env.SERVER_PORT}`);

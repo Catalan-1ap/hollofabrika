@@ -3,12 +3,16 @@ type Query {
 }
 
 type Mutation {
-    register(username: String!, email: String!, password: String!): Error
+    register(username: String!, email: String!, password: String!): Success
+    verifyEmail(token: Int!): Success
+    login(username: String!, password: String!): JwtToken
+    refresh(token: String!): JwtToken
 }
 
 type User {
     username: String!
     email: String!
+    role: Role!
 }
 
 enum Role {

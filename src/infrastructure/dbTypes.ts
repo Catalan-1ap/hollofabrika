@@ -8,6 +8,11 @@ export type DbUser = {
 	role: GqlRole
 }
 
+export type DbRefreshToken = {
+	token: string,
+	userId: string
+}
+
 
 export interface DbTemporalToken {
 	type: "register" | "restore",

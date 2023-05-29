@@ -1,7 +1,8 @@
 import { aql } from "arangojs";
 import { DbRegisterTemporalToken, DbUser } from "../../../infrastructure/dbTypes.js";
 import { querySingle } from "../../../infrastructure/dbUtils.js";
-import { GqlErrorCode, GqlMutationResolvers, GqlUser } from "../../../infrastructure/gqlTypes.js";
+import { throwApplicationError } from "../../../infrastructure/formatErrorHandler.js";
+import { GqlErrorCode, GqlMutationResolvers, GqlSuccessCode, GqlUser } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { mailSender } from "../../../infrastructure/mailSender.js";
 import { generateNumberToken, hashPassword } from "../users.services.js";
@@ -13,7 +14,7 @@ export const registerMutation: GqlMutationResolvers<HollofabrikaContext>["regist
 		const usersCollection = getUsersCollection(context.db);
 		const temporalTokensCollection = getTemporalTokensCollection(context.db);
 
-		const existed = await querySingle<DbUser>(context.db, aql`
+		const existed = await querySingle<DbUser | DbRegisterTemporalToken>(context.db, aql`
 			return not_null(
 			    first(
 			        for doc in ${usersCollection}
@@ -22,29 +23,26 @@ export const registerMutation: GqlMutationResolvers<HollofabrikaContext>["regist
 			    ),
 			    first(
 			        for doc in ${temporalTokensCollection}
-			        filter doc.username == ${args.username} or doc.email == ${args.email}
+			        filter doc.payload.username == ${args.username} or doc.payload.email == ${args.email}
 			        return doc
 			    )
 			)
 		`);
 
 		if (existed) {
-			const fieldsToCheck: {
-				name: keyof GqlUser,
-				message: string
-			}[] = [
+			const fieldsToCheck = [
 				{ name: "username", message: "Register_UsernameInUseError" },
 				{ name: "email", message: "Register_EmailInUseError" }
-			];
+			] satisfies {
+				name: keyof GqlUser,
+				message: string
+			}[];
 
 			for (let field of fieldsToCheck) {
-				const origin = existed[field.name];
+				const origin = "payload" in existed ? existed.payload[field.name] : existed[field.name];
 
 				if (origin === args[field.name])
-					return {
-						code: GqlErrorCode.BadRequest,
-						message: field.message
-					};
+					throwApplicationError(field.message, GqlErrorCode.BadRequest);
 			}
 		}
 
@@ -62,7 +60,6 @@ export const registerMutation: GqlMutationResolvers<HollofabrikaContext>["regist
 		await temporalTokensCollection.save(registerTemporalToken);
 
 		await mailSender.sendMail({
-			from: process.env.GMAIL_MAIL,
 			subject: "Email Confirmation",
 			to: args.email,
 			text: `
@@ -73,4 +70,8 @@ export const registerMutation: GqlMutationResolvers<HollofabrikaContext>["regist
 				${registerTemporalToken.token}
 			`
 		});
+
+		return {
+			code: GqlSuccessCode.ConfirmAction
+		};
 	};

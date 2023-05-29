@@ -1,8 +1,22 @@
+type Success {
+    code: SuccessCode
+}
+
+enum SuccessCode {
+    Oke
+    ConfirmAction
+}
+
+type SomethingWentWrong {
+    errors: [Error!]!
+}
+
 type Error {
-    code: ErrorCode!
     message: String!
+    code: ErrorCode
 }
 
 enum ErrorCode {
     BadRequest
+    InternalError
 }

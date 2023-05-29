@@ -4,7 +4,7 @@ import { GqlJwtToken, GqlRole } from "../../infrastructure/gqlTypes.js";
 
 
 type JwtPayload = {
-	username: string,
+	userId: string,
 	role: GqlRole
 }
 
