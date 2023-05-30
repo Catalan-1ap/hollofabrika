@@ -13,7 +13,7 @@ export const verifyEmailMutation: GqlMutationResolvers<HollofabrikaContext>["ver
 
 		const registerToken = await querySingle<DbRegisterTemporalToken>(context.db, aql`
 			for doc in ${temporalTokensCollection}
-			filter doc.type == "register" and doc.token == ${args.token}
+			filter doc.type == "register" and doc.emailToken == ${args.emailToken} and doc.confirmToken == ${args.confirmToken}
 			remove doc in ${temporalTokensCollection}
 			return OLD
 		`);

@@ -3,10 +3,14 @@ type Query {
 }
 
 type Mutation {
-    register(username: String!, email: String!, password: String!): Success
-    verifyEmail(token: Int!): Success
+    register(username: String!, email: String!, password: String!): RegisterResponse
+    verifyEmail(emailToken: Int!, confirmToken: String!): Success
     login(username: String!, password: String!): JwtToken
     refresh(token: String!): JwtToken
+}
+
+type RegisterResponse {
+    confirmToken: String
 }
 
 type User {

@@ -16,8 +16,9 @@ export type DbRefreshToken = {
 
 export interface DbTemporalToken {
 	type: "register" | "restore",
-	token: number
-}
+	emailToken: number,
+	confirmToken: string
+ }
 
 export interface DbRegisterTemporalToken extends DbTemporalToken {
 	type: "register",

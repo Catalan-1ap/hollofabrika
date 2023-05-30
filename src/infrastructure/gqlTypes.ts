@@ -1,6 +1,4 @@
-import { GraphQLResolveInfo } from "graphql";
-
-
+import { GraphQLResolveInfo } from 'graphql';
 export type Maybe<T> = T | null | undefined;
 export type InputMaybe<T> = T | null | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -18,56 +16,61 @@ export type Scalars = {
 
 export type GqlError = {
   code?: Maybe<GqlErrorCode>;
-  message: Scalars["String"];
+  message: Scalars['String'];
 };
 
 export enum GqlErrorCode {
-  BadRequest = "BadRequest",
-  InternalError = "InternalError"
+  BadRequest = 'BadRequest',
+  InternalError = 'InternalError'
 }
 
 export type GqlJwtToken = {
-  access: Scalars["String"];
-  refresh: Scalars["String"];
+  access: Scalars['String'];
+  refresh: Scalars['String'];
 };
 
 export type GqlMutation = {
   login?: Maybe<GqlJwtToken>;
   refresh?: Maybe<GqlJwtToken>;
-  register?: Maybe<GqlSuccess>;
+  register?: Maybe<GqlRegisterResponse>;
   verifyEmail?: Maybe<GqlSuccess>;
 };
 
 
 export type GqlMutationLoginArgs = {
-  password: Scalars["String"];
-  username: Scalars["String"];
+  password: Scalars['String'];
+  username: Scalars['String'];
 };
 
 
 export type GqlMutationRefreshArgs = {
-  token: Scalars["String"];
+  token: Scalars['String'];
 };
 
 
 export type GqlMutationRegisterArgs = {
-  email: Scalars["String"];
-  password: Scalars["String"];
-  username: Scalars["String"];
+  email: Scalars['String'];
+  password: Scalars['String'];
+  username: Scalars['String'];
 };
 
 
 export type GqlMutationVerifyEmailArgs = {
-  token: Scalars["Int"];
+  confirmToken: Scalars['String'];
+  emailToken: Scalars['Int'];
 };
 
 export type GqlQuery = {
   users?: Maybe<Array<Maybe<GqlUser>>>;
 };
 
+export type GqlRegisterResponse = {
+  confirmToken?: Maybe<Scalars['String']>;
+};
+
 export enum GqlRole {
-  Admin = "Admin",
-  Standalone = "Standalone"
+  Admin = 'Admin',
+  Standalone = 'Standalone'
 }
 
 export type GqlSomethingWentWrong = {
@@ -79,14 +82,14 @@ export type GqlSuccess = {
 };
 
 export enum GqlSuccessCode {
-  ConfirmAction = "ConfirmAction",
-  Oke = "Oke"
+  ConfirmAction = 'ConfirmAction',
+  Oke = 'Oke'
 }
 
 export type GqlUser = {
-  email: Scalars["String"];
+  email: Scalars['String'];
   role: GqlRole;
-  username: Scalars["String"];
+  username: Scalars['String'];
 };
 
 
@@ -160,16 +163,17 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type GqlResolversTypes = {
-  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Error: ResolverTypeWrapper<GqlError>;
   ErrorCode: GqlErrorCode;
-  Int: ResolverTypeWrapper<Scalars["Int"]>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   JwtToken: ResolverTypeWrapper<GqlJwtToken>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  RegisterResponse: ResolverTypeWrapper<GqlRegisterResponse>;
   Role: GqlRole;
   SomethingWentWrong: ResolverTypeWrapper<GqlSomethingWentWrong>;
-  String: ResolverTypeWrapper<Scalars["String"]>;
+  String: ResolverTypeWrapper<Scalars['String']>;
   Success: ResolverTypeWrapper<GqlSuccess>;
   SuccessCode: GqlSuccessCode;
   User: ResolverTypeWrapper<GqlUser>;
@@ -177,21 +181,22 @@ export type GqlResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type GqlResolversParentTypes = {
-  Boolean: Scalars["Boolean"];
+  Boolean: Scalars['Boolean'];
   Error: GqlError;
-  Int: Scalars["Int"];
+  Int: Scalars['Int'];
   JwtToken: GqlJwtToken;
   Mutation: {};
   Query: {};
+  RegisterResponse: GqlRegisterResponse;
   SomethingWentWrong: GqlSomethingWentWrong;
-  String: Scalars["String"];
+  String: Scalars['String'];
   Success: GqlSuccess;
   User: GqlUser;
 };
 
 export type GqlErrorResolvers<ContextType = any, ParentType extends GqlResolversParentTypes['Error'] = GqlResolversParentTypes['Error']> = {
-  code?: Resolver<Maybe<GqlResolversTypes["ErrorCode"]>, ParentType, ContextType>;
-  message?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
+  code?: Resolver<Maybe<GqlResolversTypes['ErrorCode']>, ParentType, ContextType>;
+  message?: Resolver<GqlResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -202,30 +207,35 @@ export type GqlJwtTokenResolvers<ContextType = any, ParentType extends GqlResolv
 };
 
 export type GqlMutationResolvers<ContextType = any, ParentType extends GqlResolversParentTypes['Mutation'] = GqlResolversParentTypes['Mutation']> = {
-  login?: Resolver<Maybe<GqlResolversTypes["JwtToken"]>, ParentType, ContextType, RequireFields<GqlMutationLoginArgs, "password" | "username">>;
-  refresh?: Resolver<Maybe<GqlResolversTypes["JwtToken"]>, ParentType, ContextType, RequireFields<GqlMutationRefreshArgs, "token">>;
-  register?: Resolver<Maybe<GqlResolversTypes["Success"]>, ParentType, ContextType, RequireFields<GqlMutationRegisterArgs, "email" | "password" | "username">>;
-  verifyEmail?: Resolver<Maybe<GqlResolversTypes["Success"]>, ParentType, ContextType, RequireFields<GqlMutationVerifyEmailArgs, "token">>;
+  login?: Resolver<Maybe<GqlResolversTypes['JwtToken']>, ParentType, ContextType, RequireFields<GqlMutationLoginArgs, 'password' | 'username'>>;
+  refresh?: Resolver<Maybe<GqlResolversTypes['JwtToken']>, ParentType, ContextType, RequireFields<GqlMutationRefreshArgs, 'token'>>;
+  register?: Resolver<Maybe<GqlResolversTypes['RegisterResponse']>, ParentType, ContextType, RequireFields<GqlMutationRegisterArgs, 'email' | 'password' | 'username'>>;
+  verifyEmail?: Resolver<Maybe<GqlResolversTypes['Success']>, ParentType, ContextType, RequireFields<GqlMutationVerifyEmailArgs, 'confirmToken' | 'emailToken'>>;
 };
 
-export type GqlQueryResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["Query"] = GqlResolversParentTypes["Query"]> = {
-  users?: Resolver<Maybe<Array<Maybe<GqlResolversTypes["User"]>>>, ParentType, ContextType>;
+export type GqlQueryResolvers<ContextType = any, ParentType extends GqlResolversParentTypes['Query'] = GqlResolversParentTypes['Query']> = {
+  users?: Resolver<Maybe<Array<Maybe<GqlResolversTypes['User']>>>, ParentType, ContextType>;
 };
 
-export type GqlSomethingWentWrongResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["SomethingWentWrong"] = GqlResolversParentTypes["SomethingWentWrong"]> = {
-  errors?: Resolver<Array<GqlResolversTypes["Error"]>, ParentType, ContextType>;
+export type GqlRegisterResponseResolvers<ContextType = any, ParentType extends GqlResolversParentTypes['RegisterResponse'] = GqlResolversParentTypes['RegisterResponse']> = {
+  confirmToken?: Resolver<Maybe<GqlResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type GqlSuccessResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["Success"] = GqlResolversParentTypes["Success"]> = {
-  code?: Resolver<Maybe<GqlResolversTypes["SuccessCode"]>, ParentType, ContextType>;
+export type GqlSomethingWentWrongResolvers<ContextType = any, ParentType extends GqlResolversParentTypes['SomethingWentWrong'] = GqlResolversParentTypes['SomethingWentWrong']> = {
+  errors?: Resolver<Array<GqlResolversTypes['Error']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type GqlUserResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["User"] = GqlResolversParentTypes["User"]> = {
-  email?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
-  role?: Resolver<GqlResolversTypes["Role"], ParentType, ContextType>;
-  username?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
+export type GqlSuccessResolvers<ContextType = any, ParentType extends GqlResolversParentTypes['Success'] = GqlResolversParentTypes['Success']> = {
+  code?: Resolver<Maybe<GqlResolversTypes['SuccessCode']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GqlUserResolvers<ContextType = any, ParentType extends GqlResolversParentTypes['User'] = GqlResolversParentTypes['User']> = {
+  email?: Resolver<GqlResolversTypes['String'], ParentType, ContextType>;
+  role?: Resolver<GqlResolversTypes['Role'], ParentType, ContextType>;
+  username?: Resolver<GqlResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -234,6 +244,7 @@ export type GqlResolvers<ContextType = any> = {
   JwtToken?: GqlJwtTokenResolvers<ContextType>;
   Mutation?: GqlMutationResolvers<ContextType>;
   Query?: GqlQueryResolvers<ContextType>;
+  RegisterResponse?: GqlRegisterResponseResolvers<ContextType>;
   SomethingWentWrong?: GqlSomethingWentWrongResolvers<ContextType>;
   Success?: GqlSuccessResolvers<ContextType>;
   User?: GqlUserResolvers<ContextType>;

@@ -2,7 +2,7 @@ import { aql } from "arangojs";
 import { DbRegisterTemporalToken, DbUser } from "../../../infrastructure/dbTypes.js";
 import { querySingle } from "../../../infrastructure/dbUtils.js";
 import { throwApplicationError } from "../../../infrastructure/formatErrorHandler.js";
-import { GqlErrorCode, GqlMutationResolvers, GqlSuccessCode, GqlUser } from "../../../infrastructure/gqlTypes.js";
+import { GqlErrorCode, GqlMutationResolvers, GqlUser } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { mailSender } from "../../../infrastructure/mailSender.js";
 import { generateNumberToken, hashPassword } from "../users.services.js";
@@ -14,20 +14,18 @@ export const registerMutation: GqlMutationResolvers<HollofabrikaContext>["regist
 		const usersCollection = getUsersCollection(context.db);
 		const temporalTokensCollection = getTemporalTokensCollection(context.db);
 
-		const existed = await querySingle<DbUser | DbRegisterTemporalToken>(context.db, aql`
-			return not_null(
-			    first(
-			        for doc in ${usersCollection}
-			        filter doc.username == ${args.username} or doc.email == ${args.email}
-			        return doc
-			    ),
-			    first(
-			        for doc in ${temporalTokensCollection}
-			        filter doc.payload.username == ${args.username} or doc.payload.email == ${args.email}
-			        return doc
-			    )
+		const trx = await context.db.beginTransaction({
+			read: [usersCollection],
+			write: [temporalTokensCollection]
+		});
+
+		const existed = await trx.step(() => querySingle<DbUser>(context.db, aql`
+			return first(
+				for doc in ${usersCollection}
+				filter doc.username == ${args.username} or doc.email == ${args.email}
+				return doc
 			)
-		`);
+		`));
 
 		if (existed) {
 			const fieldsToCheck = [
@@ -39,7 +37,7 @@ export const registerMutation: GqlMutationResolvers<HollofabrikaContext>["regist
 			}[];
 
 			for (let field of fieldsToCheck) {
-				const origin = "payload" in existed ? existed.payload[field.name] : existed[field.name];
+				const origin = existed[field.name];
 
 				if (origin === args[field.name])
 					throwApplicationError(field.message, GqlErrorCode.BadRequest);
@@ -50,14 +48,19 @@ export const registerMutation: GqlMutationResolvers<HollofabrikaContext>["regist
 
 		const registerTemporalToken: DbRegisterTemporalToken = {
 			type: "register",
-			token: generateNumberToken(),
+			emailToken: process.env.NODE_ENV === "development" ? 111111 : generateNumberToken(),
+			confirmToken: crypto.randomUUID(),
 			payload: {
 				username: args.username,
 				email: args.email,
 				passwordHash: hash
 			},
 		};
-		await temporalTokensCollection.save(registerTemporalToken);
+		await trx.step(() => context.db.query(aql`
+			upsert ${{ payload: { username: args.username, email: args.email } }}
+			insert ${registerTemporalToken}
+			update ${registerTemporalToken} IN ${temporalTokensCollection}
+		`));
 
 		await mailSender.sendMail({
 			subject: "Email Confirmation",
@@ -67,11 +70,12 @@ export const registerMutation: GqlMutationResolvers<HollofabrikaContext>["regist
 				
 				To verify your e-mail address, please use this key
 				
-				${registerTemporalToken.token}
+				${registerTemporalToken.emailToken}
 			`
 		});
 
+		await trx.commit();
 		return {
-			code: GqlSuccessCode.ConfirmAction
+			confirmToken: registerTemporalToken.confirmToken
 		};
 	};

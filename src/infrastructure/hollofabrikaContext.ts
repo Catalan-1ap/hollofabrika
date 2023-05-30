@@ -1,6 +1,7 @@
 import { ContextFunction } from "@apollo/server";
 import { KoaContextFunctionArgument } from "@as-integrations/koa/src";
 import { Database } from "arangojs";
+import { JwtPayload } from "jsonwebtoken";
 import { tryAuthorizeWithJwtBearer } from "../features/JwtAuth/tryAuthorizeWithJwtBearer.js";
 import { DbUser } from "./dbTypes.js";
 import { connectToDb } from "./setups.js";
@@ -8,7 +9,7 @@ import { connectToDb } from "./setups.js";
 
 export interface HollofabrikaContext {
 	db: Database,
-	user?: DbUser
+	user?: JwtPayload
 }
 
 export const contextHandler: ContextFunction<[KoaContextFunctionArgument], HollofabrikaContext> =
