@@ -23,6 +23,7 @@ import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHt
 import { koaMiddleware } from "@as-integrations/koa";
 import cors from "@koa/cors";
 import Router from "@koa/router";
+import { resolvers as scalarResolvers, typeDefs as scalarsTypeDefs } from "graphql-scalars";
 import http from "http";
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
@@ -40,10 +41,9 @@ const httpServer = http.createServer(app.callback());
 
 const server = new ApolloServer<HollofabrikaContext>({
 	plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-	typeDefs: typeDefs,
-	resolvers: resolvers,
+	typeDefs: [...scalarsTypeDefs, typeDefs],
+	resolvers: [scalarResolvers, resolvers],
 	formatError: formatErrorHandler,
-
 });
 await server.start();
 

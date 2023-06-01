@@ -3,13 +3,17 @@ import jwt from "jsonwebtoken";
 import { GqlJwtToken, GqlRole } from "../../infrastructure/gqlTypes.js";
 
 
-type JwtPayload = {
+export type JwtPayload = {
 	userId: string,
 	role: GqlRole
 }
 
-export function decodeToken(token: string): JwtPayload {
-	return jwt.verify(token, process.env.JWT_SIGNATURE!) as JwtPayload;
+export function decodeToken(token: string): JwtPayload | undefined {
+	try {
+		return jwt.verify(token, process.env.JWT_SIGNATURE!) as JwtPayload;
+	} catch (e) {
+		return undefined;
+	}
 }
 
 export function generateTokens(payload: JwtPayload): GqlJwtToken {

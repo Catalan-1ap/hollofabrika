@@ -2,7 +2,7 @@ import { aql } from "arangojs";
 import { Document } from "arangojs/documents.js";
 import { DbUser } from "../../../infrastructure/dbTypes.js";
 import { querySingle } from "../../../infrastructure/dbUtils.js";
-import { throwApplicationError } from "../../../infrastructure/formatErrorHandler.js";
+import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { GqlErrorCode, GqlMutationResolvers } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { comparePassword, generateTokens } from "../users.services.js";
@@ -19,11 +19,11 @@ export const loginMutation: GqlMutationResolvers<HollofabrikaContext>["login"] =
 			return doc
 		`);
 		if (!user)
-			throwApplicationError("Login_WrongUsernameError", GqlErrorCode.BadRequest);
+			throw makeApplicationError("Login_WrongUsernameError", GqlErrorCode.BadRequest);
 
 		const isPasswordCorrect = await comparePassword(args.password, user.passwordHash);
 		if (!isPasswordCorrect)
-			throwApplicationError("Login_WrongPasswordError", GqlErrorCode.BadRequest);
+			throw makeApplicationError("Login_WrongPasswordError", GqlErrorCode.BadRequest);
 
 		const tokens = generateTokens({
 			userId: user._id,

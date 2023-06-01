@@ -1,7 +1,7 @@
 import { aql } from "arangojs";
 import { DbRegisterTemporalToken } from "../../../infrastructure/dbTypes.js";
 import { querySingle } from "../../../infrastructure/dbUtils.js";
-import { throwApplicationError } from "../../../infrastructure/formatErrorHandler.js";
+import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { GqlErrorCode, GqlMutationResolvers, GqlRole, GqlSuccessCode } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { getTemporalTokensCollection, getUsersCollection } from "../users.setup.js";
@@ -18,7 +18,7 @@ export const verifyEmailMutation: GqlMutationResolvers<HollofabrikaContext>["ver
 			return OLD
 		`);
 		if (!registerToken)
-			throwApplicationError("VerifyEmail_WrongToken", GqlErrorCode.BadRequest);
+			throw makeApplicationError("VerifyEmail_WrongToken", GqlErrorCode.BadRequest);
 
 		const usersCollection = getUsersCollection(context.db);
 

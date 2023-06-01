@@ -1,0 +1,17 @@
+type Query {
+    categories: [Category!]!
+}
+
+type Mutation {
+    createCategory(category: CreateCategoryArgs!): Category!
+}
+
+type Category {
+    name: String!,
+    attributes: JSONObject!
+}
+
+input CreateCategoryArgs {
+    name: String!
+    attributes: JSONObject!
+}

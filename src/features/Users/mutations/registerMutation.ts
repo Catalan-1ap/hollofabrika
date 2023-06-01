@@ -1,7 +1,7 @@
 import { aql } from "arangojs";
 import { DbRegisterTemporalToken, DbUser } from "../../../infrastructure/dbTypes.js";
 import { querySingle } from "../../../infrastructure/dbUtils.js";
-import { throwApplicationError } from "../../../infrastructure/formatErrorHandler.js";
+import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { GqlErrorCode, GqlMutationResolvers, GqlUser } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { mailSender } from "../../../infrastructure/mailSender.js";
@@ -40,7 +40,7 @@ export const registerMutation: GqlMutationResolvers<HollofabrikaContext>["regist
 				const origin = existed[field.name];
 
 				if (origin === args[field.name])
-					throwApplicationError(field.message, GqlErrorCode.BadRequest);
+					throw makeApplicationError(field.message, GqlErrorCode.BadRequest);
 			}
 		}
 

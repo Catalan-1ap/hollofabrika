@@ -1,9 +1,8 @@
 import { ContextFunction } from "@apollo/server";
 import { KoaContextFunctionArgument } from "@as-integrations/koa/src";
 import { Database } from "arangojs";
-import { JwtPayload } from "jsonwebtoken";
 import { tryAuthorizeWithJwtBearer } from "../features/JwtAuth/tryAuthorizeWithJwtBearer.js";
-import { DbUser } from "./dbTypes.js";
+import { JwtPayload } from "../features/Users/users.services.js";
 import { connectToDb } from "./setups.js";
 
 

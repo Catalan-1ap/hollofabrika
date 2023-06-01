@@ -1,4 +1,5 @@
-import type { CodegenConfig } from '@graphql-codegen/cli';
+import type { CodegenConfig } from "@graphql-codegen/cli";
+
 
 const config: CodegenConfig = {
   overwrite: true,
@@ -7,8 +8,11 @@ const config: CodegenConfig = {
     "src/infrastructure/gqlTypes.ts": {
       plugins: ["typescript", "typescript-resolvers"],
       config: {
+        scalars: {
+          JSONObject: "Record<string, string>"
+        },
         typesPrefix: "Gql",
-        maybeValue: 'T | null | undefined',
+        maybeValue: "T | null | undefined",
         nonOptionalTypename: false,
         skipTypename: true
       }

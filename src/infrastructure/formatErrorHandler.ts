@@ -2,8 +2,8 @@ import { GraphQLError, GraphQLFormattedError } from "graphql/index.js";
 import { GqlErrorCode } from "./gqlTypes.js";
 
 
-export function throwApplicationError(message: string, code: GqlErrorCode) {
-	throw new GraphQLError(message, {
+export function makeApplicationError(message: string, code: GqlErrorCode) {
+	return new GraphQLError(message, {
 		extensions: {
 			type: "ApplicationError",
 			code: code

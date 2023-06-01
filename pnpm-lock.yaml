@@ -27,6 +27,7 @@ specifiers:
   esbuild: ^0.17.19
   esbuild-node-tsc: ^2.0.5
   graphql: ^16.6.0
+  graphql-scalars: ^1.22.1
   graphql-tools: ^9.0.0
   jsonwebtoken: ^9.0.0
   koa: ^2.14.2
@@ -48,6 +49,7 @@ dependencies:
   dotenv: 16.1.0
   envalid: 7.3.1
   graphql: 16.6.0
+  graphql-scalars: 1.22.1_graphql@16.6.0
   graphql-tools: 9.0.0_graphql@16.6.0
   jsonwebtoken: 9.0.0
   koa: 2.14.2
@@ -3268,9 +3270,19 @@ packages:
       - encoding
     dev: true
 
+  /graphql-scalars/1.22.1_graphql@16.6.0:
+    resolution: { integrity: sha512-PurWR2/a78EpYapRyPttBDfjIdsSg7q5or6cTaaGyZSV/VDh3o/6m6/BIpvGKGvmE3sY94UrLOZaCHskF5MuiA== }
+    engines: { node: '>=10' }
+    peerDependencies:
+      graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+    dependencies:
+      graphql: 16.6.0
+      tslib: 2.5.2
+    dev: false
+
   /graphql-tag/2.12.6_graphql@16.6.0:
-    resolution: {integrity: sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg==}
-    engines: {node: '>=10'}
+    resolution: { integrity: sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg== }
+    engines: { node: '>=10' }
     peerDependencies:
       graphql: ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
