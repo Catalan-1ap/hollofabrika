@@ -1,7 +1,7 @@
 scalar JSONObject
 
 type Success {
-    code: SuccessCode
+    code: SuccessCode!
 }
 
 enum SuccessCode {

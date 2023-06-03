@@ -1,15 +1,12 @@
 import { GqlRole } from "./gqlTypes.js";
 
 
-export type DbCategory = {
-	name: string
-}
-
 // attributes: [ "weight", "price", "colors" ]
 // searchQuery({ weight: "1кг", colors: "красный" }) == или any ==
 
 export type DbProduct = {
-	name: string
+	name: string,
+	price: number
 }
 
 export type DbUser = {

@@ -1,0 +1,16 @@
+type Mutation {
+    createProduct(category: String!, product: CreateProductArgs!): Product!
+    deleteProduct(id: String!): Product!
+    updateProduct(id: String!, product: CreateProductArgs!): Product!
+}
+
+input CreateProductArgs {
+    name: String!
+    price: Int!
+}
+
+type Product {
+    id: String!,
+    name: String!,
+    price: Int!
+}

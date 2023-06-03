@@ -2,19 +2,23 @@ util.inspect.defaultOptions.depth = 7;
 
 await import("dotenv").then(z => z.config());
 await import("envalid").then(z => z.cleanEnv(process.env, {
-	NODE_ENV: z.str({ choices: ["development", "production"] }),
-	SERVER_PORT: z.num(),
+    NODE_ENV: z.str({ choices: [ "development", "production" ] }),
 
-	ARANGO_URL: z.url(),
-	ARANGO_DB: z.str(),
-	ARANGO_USER: z.str(),
-	ARANGO_PASSWORD: z.str(),
+    SERVER_PORT: z.num(),
 
-	JWT_SIGNATURE: z.str(),
-	JWT_ACCESS_EXPIRE: z.str(),
-	JWT_REFRESH_EXPIRE: z.str(),
+    ARANGO_URL: z.url(),
+    ARANGO_DB: z.str(),
+    ARANGO_USER: z.str(),
+    ARANGO_PASSWORD: z.str(),
 
-	GMAIL_MAIL: z.email(),
+    REDIS_DEFAULT_CACHE_TTL: z.num(),
+    REDIS_PORT: z.num(),
+
+    JWT_SIGNATURE: z.str(),
+    JWT_ACCESS_EXPIRE: z.str(),
+    JWT_REFRESH_EXPIRE: z.str(),
+
+    GMAIL_MAIL: z.email(),
 }));
 
 

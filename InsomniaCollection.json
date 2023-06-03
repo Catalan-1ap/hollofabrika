@@ -1,13 +1,137 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2023-06-01T21:42:18.474Z",
+  "__export_date": "2023-06-03T18:21:52.808Z",
   "__export_source": "insomnia.desktop.app:v2022.7.5",
   "resources": [
     {
+      "_id": "req_0b92ce8f24e44e6faa5a31389142fcad",
+      "parentId": "fld_1b8b6718e5164836ac5d4f8972ce6bd2",
+      "modified": 1685809028195,
+      "created": 1685808938237,
+      "url": "localhost:3333/graphql",
+      "name": "CreateProduct Mutation",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"mutation {\\n\\tcreateProduct(category: \\\"Тест\\\", product: {\\n\\t\\tname: \\\"Тестовый продукт\\\",\\n\\t\\tprice: 100\\n\\t}) {\\n\\t\\tid\\n\\t\\tname\\n\\t\\tprice\\n\\t}\\n}\"}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.tokens.access }}"
+      },
+      "metaSortKey": -1685806365301.125,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_1b8b6718e5164836ac5d4f8972ce6bd2",
+      "parentId": "wrk_a3d0b048995c49c5bc0a923a217b0b09",
+      "modified": 1685808927704,
+      "created": 1685808927704,
+      "name": "Products",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1685808927704,
+      "_type": "request_group"
+    },
+    {
+      "_id": "wrk_a3d0b048995c49c5bc0a923a217b0b09",
+      "parentId": null,
+      "modified": 1684853864755,
+      "created": 1684853858608,
+      "name": "Hollofabrika",
+      "description": "",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "req_380edfbdb8cd42c8a69cc080b9cb7563",
+      "parentId": "fld_1b8b6718e5164836ac5d4f8972ce6bd2",
+      "modified": 1685816250383,
+      "created": 1685813589601,
+      "url": "localhost:3333/graphql",
+      "name": "DeleteProduct Mutation",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"mutation DeleteProduct($id: String!) {\\n\\tdeleteProduct(id: $id) {\\n\\t\\tid\\n\\t\\tname\\n\\t\\tprice\\n\\t}\\n}\",\"operationName\":\"DeleteProduct\",\"variables\":{\"id\":\"{% response 'body', 'req_0b92ce8f24e44e6faa5a31389142fcad', 'b64::JC5kYXRhLmNyZWF0ZVByb2R1Y3QuaWQ=::46b', 'never', 60 %}\"}}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.tokens.access }}"
+      },
+      "metaSortKey": -1685596354437.0625,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_d35ebf6f21d148af840e463fdb2742a9",
+      "parentId": "fld_1b8b6718e5164836ac5d4f8972ce6bd2",
+      "modified": 1685816489934,
+      "created": 1685816089913,
+      "url": "localhost:3333/graphql",
+      "name": "UpdateProduct Mutation",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"mutation UpdateProduct($id: String!) {\\n\\tupdateProduct(id: $id, product: {\\n\\t\\tname: \\\"Обновленный продукт\\\",\\n\\t\\tprice: 200\\n\\t}) {\\n\\t\\tid\\n\\t\\tname\\n\\t\\tprice\\n\\t}\\n}\",\"operationName\":\"UpdateProduc\",\"variables\":{\"id\":\"{% response 'body', 'req_0b92ce8f24e44e6faa5a31389142fcad', 'b64::JC5kYXRhLmNyZWF0ZVByb2R1Y3QuaWQ=::46b', 'never', 60 %}\"}}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.tokens.access }}"
+      },
+      "metaSortKey": -1685491349005.0312,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
       "_id": "req_20717d41089d4df484e84eae09fd187c",
       "parentId": "fld_36714cb195444783ac386c59b285b229",
-      "modified": 1685645848615,
+      "modified": 1685808987765,
       "created": 1685644944969,
       "url": "localhost:3333/graphql",
       "name": "CreateCategory Mutation",
@@ -15,7 +139,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation {\\n\\tcreateCategory(input: { \\n\\t\\tname: \\\"Test\\\",\\n\\t\\tattributes: {\\n\\t\\t\\tprop1: 1,\\n\\t\\t\\tprop2: \\\"test\\\"\\n\\t\\t}\\n\\t}) {\\n\\t\\tname\\n\\t\\tattributes\\n\\t}\\n}\"}"
+        "text": "{\"query\":\"mutation {\\n\\tcreateCategory(name: \\\"Тест\\\") {\\n\\t\\tcode\\n\\t}\\n}\"}"
       },
       "parameters": [],
       "headers": [
@@ -51,14 +175,38 @@
       "_type": "request_group"
     },
     {
-      "_id": "wrk_a3d0b048995c49c5bc0a923a217b0b09",
-      "parentId": null,
-      "modified": 1684853864755,
-      "created": 1684853858608,
-      "name": "Hollofabrika",
+      "_id": "req_57ba6d92b8d640dabe1f5a099eafe6c4",
+      "parentId": "fld_36714cb195444783ac386c59b285b229",
+      "modified": 1685807480662,
+      "created": 1685802311581,
+      "url": "localhost:3333/graphql",
+      "name": "DeleteCategory Mutation",
       "description": "",
-      "scope": "collection",
-      "_type": "workspace"
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"mutation {\\n\\tdeleteCategory(name: \\\"Тест1\\\") {\\n\\t\\tcode\\n\\t}\\n}\"}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.tokens.access }}"
+      },
+      "metaSortKey": -1685386343554.25,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
     },
     {
       "_id": "req_95dc1be0bb68416696e1cb9999508a9c",

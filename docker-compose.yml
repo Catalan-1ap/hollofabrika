@@ -5,3 +5,15 @@ services:
       - "8529:8529"
     environment:
       ARANGO_NO_AUTH: 1
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+  redis-commander:
+    image: rediscommander/redis-commander
+    depends_on:
+      - redis
+    ports:
+      - 8081:8081
+    environment:
+      - REDIS_HOSTS=hollofabrika:redis:6379

@@ -1,6 +1,6 @@
 import { aql } from "arangojs";
 import { DbRegisterTemporalToken, DbUser } from "../../../infrastructure/dbTypes.js";
-import { querySingle } from "../../../infrastructure/dbUtils.js";
+import { querySingle } from "../../../infrastructure/arangoUtils.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { GqlErrorCode, GqlMutationResolvers, GqlUser } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";

@@ -1,7 +1,7 @@
 import { aql } from "arangojs";
 import { Document } from "arangojs/documents.js";
 import { DbUser } from "../../../infrastructure/dbTypes.js";
-import { querySingle } from "../../../infrastructure/dbUtils.js";
+import { querySingle } from "../../../infrastructure/arangoUtils.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { GqlErrorCode, GqlMutationResolvers } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
