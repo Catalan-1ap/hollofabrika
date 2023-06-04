@@ -4,9 +4,15 @@ import { GqlRole } from "./gqlTypes.js";
 // attributes: [ "weight", "price", "colors" ]
 // searchQuery({ weight: "1кг", colors: "красный" }) == или any ==
 
+export type DbCategory = {
+	name: string,
+	collectionName: string
+}
+
 export type DbProduct = {
 	name: string,
-	price: number
+	price: number,
+	attributes?: Record<string, string>
 }
 
 export type DbUser = {

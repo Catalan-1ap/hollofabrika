@@ -1,16 +1,27 @@
+type Query {
+    products(ids: [String], pageData: PageDataInput): ProductsQueryResult!
+}
+
 type Mutation {
     createProduct(category: String!, product: CreateProductArgs!): Product!
     deleteProduct(id: String!): Product!
     updateProduct(id: String!, product: CreateProductArgs!): Product!
 }
 
+type ProductsQueryResult {
+    pageData: PageData,
+    items: [Product!]!
+}
+
 input CreateProductArgs {
     name: String!
     price: Int!
+    attributes: JSONObject
 }
 
 type Product {
     id: String!,
     name: String!,
-    price: Int!
+    price: Int!,
+    attributes: JSONObject
 }

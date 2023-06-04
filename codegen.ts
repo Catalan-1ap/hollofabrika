@@ -12,7 +12,7 @@ const config: CodegenConfig = {
           JSONObject: "Record<string, string>"
         },
         typesPrefix: "Gql",
-        maybeValue: "T | null | undefined",
+        maybeValue: "T | undefined",
         nonOptionalTypename: false,
         skipTypename: true
       }

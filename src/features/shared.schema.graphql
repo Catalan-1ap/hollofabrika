@@ -1,5 +1,16 @@
 scalar JSONObject
 
+input PageDataInput {
+    page: Int!
+    pageSize: Int!
+}
+
+type PageData {
+    totalPages: Int!
+    currentPage: Int!,
+    pageSize: Int!
+}
+
 type Success {
     code: SuccessCode!
 }

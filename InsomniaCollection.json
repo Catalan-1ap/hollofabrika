@@ -1,7 +1,7 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2023-06-03T18:21:52.808Z",
+  "__export_date": "2023-06-03T18:36:37.360Z",
   "__export_source": "insomnia.desktop.app:v2022.7.5",
   "resources": [
     {
@@ -97,7 +97,7 @@
     {
       "_id": "req_d35ebf6f21d148af840e463fdb2742a9",
       "parentId": "fld_1b8b6718e5164836ac5d4f8972ce6bd2",
-      "modified": 1685816489934,
+      "modified": 1685816587131,
       "created": 1685816089913,
       "url": "localhost:3333/graphql",
       "name": "UpdateProduct Mutation",
@@ -105,7 +105,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation UpdateProduct($id: String!) {\\n\\tupdateProduct(id: $id, product: {\\n\\t\\tname: \\\"Обновленный продукт\\\",\\n\\t\\tprice: 200\\n\\t}) {\\n\\t\\tid\\n\\t\\tname\\n\\t\\tprice\\n\\t}\\n}\",\"operationName\":\"UpdateProduc\",\"variables\":{\"id\":\"{% response 'body', 'req_0b92ce8f24e44e6faa5a31389142fcad', 'b64::JC5kYXRhLmNyZWF0ZVByb2R1Y3QuaWQ=::46b', 'never', 60 %}\"}}"
+        "text": "{\"query\":\"mutation UpdateProduct($id: String!) {\\n\\tupdateProduct(id: $id, product: {\\n\\t\\tname: \\\"Обновленный продукт\\\",\\n\\t\\tprice: 200\\n\\t}) {\\n\\t\\tid\\n\\t\\tname\\n\\t\\tprice\\n\\t}\\n}\",\"operationName\":\"UpdateProduct\",\"variables\":{\"id\":\"{% response 'body', 'req_0b92ce8f24e44e6faa5a31389142fcad', 'b64::JC5kYXRhLmNyZWF0ZVByb2R1Y3QuaWQ=::46b', 'never', 60 %}\"}}"
       },
       "parameters": [],
       "headers": [
@@ -199,6 +199,40 @@
         "token": "{{ _.tokens.access }}"
       },
       "metaSortKey": -1685386343554.25,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_cad725b147e54fa2804181fde3bc81a8",
+      "parentId": "fld_36714cb195444783ac386c59b285b229",
+      "modified": 1685817017292,
+      "created": 1685816778987,
+      "url": "localhost:3333/graphql",
+      "name": "UpdateCategory Mutation",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/graphql",
+        "text": "{\"query\":\"mutation {\\n\\tupdateCategory(originalName: \\\"Тест\\\", newName: \\\"Тест2\\\") {\\n\\t\\tcode\\n\\t}\\n}\"}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.tokens.access }}"
+      },
+      "metaSortKey": -1685386343551.125,
       "isPrivate": false,
       "settingStoreCookies": true,
       "settingSendCookies": true,

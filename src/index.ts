@@ -11,9 +11,6 @@ await import("envalid").then(z => z.cleanEnv(process.env, {
     ARANGO_USER: z.str(),
     ARANGO_PASSWORD: z.str(),
 
-    REDIS_DEFAULT_CACHE_TTL: z.num(),
-    REDIS_PORT: z.num(),
-
     JWT_SIGNATURE: z.str(),
     JWT_ACCESS_EXPIRE: z.str(),
     JWT_REFRESH_EXPIRE: z.str(),

@@ -1,8 +1,8 @@
-import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from "graphql";
 
 
-export type Maybe<T> = T | null | undefined;
-export type InputMaybe<T> = T | null | undefined;
+export type Maybe<T> = T | undefined;
+export type InputMaybe<T> = T | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -83,8 +83,9 @@ export type Scalars = {
 };
 
 export type GqlCreateProductArgs = {
-  name: Scalars['String'];
-  price: Scalars['Int'];
+  attributes?: InputMaybe<Scalars["JSONObject"]>;
+  name: Scalars["String"];
+  price: Scalars["Int"];
 };
 
 export type GqlError = {
@@ -162,33 +163,57 @@ export type GqlMutationUpdateCategoryArgs = {
 
 
 export type GqlMutationUpdateProductArgs = {
-  id: Scalars['String'];
+  id: Scalars["String"];
   product: GqlCreateProductArgs;
 };
 
 
 export type GqlMutationVerifyEmailArgs = {
-  confirmToken: Scalars['String'];
-  emailToken: Scalars['Int'];
+  confirmToken: Scalars["String"];
+  emailToken: Scalars["Int"];
+};
+
+export type GqlPageData = {
+  currentPage: Scalars["Int"];
+  pageSize: Scalars["Int"];
+  totalPages: Scalars["Int"];
+};
+
+export type GqlPageDataInput = {
+  page: Scalars["Int"];
+  pageSize: Scalars["Int"];
 };
 
 export type GqlProduct = {
-  id: Scalars['String'];
-  name: Scalars['String'];
-  price: Scalars['Int'];
+  attributes?: Maybe<Scalars["JSONObject"]>;
+  id: Scalars["String"];
+  name: Scalars["String"];
+  price: Scalars["Int"];
+};
+
+export type GqlProductsQueryResult = {
+  items: Array<GqlProduct>;
+  pageData?: Maybe<GqlPageData>;
 };
 
 export type GqlQuery = {
   currentUser: GqlUser;
+  products: GqlProductsQueryResult;
+};
+
+
+export type GqlQueryProductsArgs = {
+  ids?: InputMaybe<Array<InputMaybe<Scalars["String"]>>>;
+  pageData?: InputMaybe<GqlPageDataInput>;
 };
 
 export type GqlRegisterResponse = {
-  confirmToken?: Maybe<Scalars['String']>;
+  confirmToken?: Maybe<Scalars["String"]>;
 };
 
 export enum GqlRole {
-  Admin = 'Admin',
-  Standalone = 'Standalone'
+  Admin = "Admin",
+  Standalone = "Standalone"
 }
 
 export type GqlSomethingWentWrong = {
@@ -324,32 +349,35 @@ export type GqlResolversTypes = {
   Locale: ResolverTypeWrapper<Scalars['Locale']>;
   Long: ResolverTypeWrapper<Scalars['Long']>;
   Longitude: ResolverTypeWrapper<Scalars['Longitude']>;
-  MAC: ResolverTypeWrapper<Scalars['MAC']>;
+  MAC: ResolverTypeWrapper<Scalars["MAC"]>;
   Mutation: ResolverTypeWrapper<{}>;
-  NegativeFloat: ResolverTypeWrapper<Scalars['NegativeFloat']>;
-  NegativeInt: ResolverTypeWrapper<Scalars['NegativeInt']>;
-  NonEmptyString: ResolverTypeWrapper<Scalars['NonEmptyString']>;
-  NonNegativeFloat: ResolverTypeWrapper<Scalars['NonNegativeFloat']>;
-  NonNegativeInt: ResolverTypeWrapper<Scalars['NonNegativeInt']>;
-  NonPositiveFloat: ResolverTypeWrapper<Scalars['NonPositiveFloat']>;
-  NonPositiveInt: ResolverTypeWrapper<Scalars['NonPositiveInt']>;
-  ObjectID: ResolverTypeWrapper<Scalars['ObjectID']>;
-  PhoneNumber: ResolverTypeWrapper<Scalars['PhoneNumber']>;
-  Port: ResolverTypeWrapper<Scalars['Port']>;
-  PositiveFloat: ResolverTypeWrapper<Scalars['PositiveFloat']>;
-  PositiveInt: ResolverTypeWrapper<Scalars['PositiveInt']>;
-  PostalCode: ResolverTypeWrapper<Scalars['PostalCode']>;
+  NegativeFloat: ResolverTypeWrapper<Scalars["NegativeFloat"]>;
+  NegativeInt: ResolverTypeWrapper<Scalars["NegativeInt"]>;
+  NonEmptyString: ResolverTypeWrapper<Scalars["NonEmptyString"]>;
+  NonNegativeFloat: ResolverTypeWrapper<Scalars["NonNegativeFloat"]>;
+  NonNegativeInt: ResolverTypeWrapper<Scalars["NonNegativeInt"]>;
+  NonPositiveFloat: ResolverTypeWrapper<Scalars["NonPositiveFloat"]>;
+  NonPositiveInt: ResolverTypeWrapper<Scalars["NonPositiveInt"]>;
+  ObjectID: ResolverTypeWrapper<Scalars["ObjectID"]>;
+  PageData: ResolverTypeWrapper<GqlPageData>;
+  PageDataInput: GqlPageDataInput;
+  PhoneNumber: ResolverTypeWrapper<Scalars["PhoneNumber"]>;
+  Port: ResolverTypeWrapper<Scalars["Port"]>;
+  PositiveFloat: ResolverTypeWrapper<Scalars["PositiveFloat"]>;
+  PositiveInt: ResolverTypeWrapper<Scalars["PositiveInt"]>;
+  PostalCode: ResolverTypeWrapper<Scalars["PostalCode"]>;
   Product: ResolverTypeWrapper<GqlProduct>;
+  ProductsQueryResult: ResolverTypeWrapper<GqlProductsQueryResult>;
   Query: ResolverTypeWrapper<{}>;
-  RGB: ResolverTypeWrapper<Scalars['RGB']>;
-  RGBA: ResolverTypeWrapper<Scalars['RGBA']>;
+  RGB: ResolverTypeWrapper<Scalars["RGB"]>;
+  RGBA: ResolverTypeWrapper<Scalars["RGBA"]>;
   RegisterResponse: ResolverTypeWrapper<GqlRegisterResponse>;
   Role: GqlRole;
-  RoutingNumber: ResolverTypeWrapper<Scalars['RoutingNumber']>;
-  SafeInt: ResolverTypeWrapper<Scalars['SafeInt']>;
-  SemVer: ResolverTypeWrapper<Scalars['SemVer']>;
+  RoutingNumber: ResolverTypeWrapper<Scalars["RoutingNumber"]>;
+  SafeInt: ResolverTypeWrapper<Scalars["SafeInt"]>;
+  SemVer: ResolverTypeWrapper<Scalars["SemVer"]>;
   SomethingWentWrong: ResolverTypeWrapper<GqlSomethingWentWrong>;
-  String: ResolverTypeWrapper<Scalars['String']>;
+  String: ResolverTypeWrapper<Scalars["String"]>;
   Success: ResolverTypeWrapper<GqlSuccess>;
   SuccessCode: GqlSuccessCode;
   Time: ResolverTypeWrapper<Scalars['Time']>;
@@ -409,31 +437,34 @@ export type GqlResolversParentTypes = {
   Locale: Scalars['Locale'];
   Long: Scalars['Long'];
   Longitude: Scalars['Longitude'];
-  MAC: Scalars['MAC'];
+  MAC: Scalars["MAC"];
   Mutation: {};
-  NegativeFloat: Scalars['NegativeFloat'];
-  NegativeInt: Scalars['NegativeInt'];
-  NonEmptyString: Scalars['NonEmptyString'];
-  NonNegativeFloat: Scalars['NonNegativeFloat'];
-  NonNegativeInt: Scalars['NonNegativeInt'];
-  NonPositiveFloat: Scalars['NonPositiveFloat'];
-  NonPositiveInt: Scalars['NonPositiveInt'];
-  ObjectID: Scalars['ObjectID'];
-  PhoneNumber: Scalars['PhoneNumber'];
-  Port: Scalars['Port'];
-  PositiveFloat: Scalars['PositiveFloat'];
-  PositiveInt: Scalars['PositiveInt'];
-  PostalCode: Scalars['PostalCode'];
+  NegativeFloat: Scalars["NegativeFloat"];
+  NegativeInt: Scalars["NegativeInt"];
+  NonEmptyString: Scalars["NonEmptyString"];
+  NonNegativeFloat: Scalars["NonNegativeFloat"];
+  NonNegativeInt: Scalars["NonNegativeInt"];
+  NonPositiveFloat: Scalars["NonPositiveFloat"];
+  NonPositiveInt: Scalars["NonPositiveInt"];
+  ObjectID: Scalars["ObjectID"];
+  PageData: GqlPageData;
+  PageDataInput: GqlPageDataInput;
+  PhoneNumber: Scalars["PhoneNumber"];
+  Port: Scalars["Port"];
+  PositiveFloat: Scalars["PositiveFloat"];
+  PositiveInt: Scalars["PositiveInt"];
+  PostalCode: Scalars["PostalCode"];
   Product: GqlProduct;
+  ProductsQueryResult: GqlProductsQueryResult;
   Query: {};
-  RGB: Scalars['RGB'];
-  RGBA: Scalars['RGBA'];
+  RGB: Scalars["RGB"];
+  RGBA: Scalars["RGBA"];
   RegisterResponse: GqlRegisterResponse;
-  RoutingNumber: Scalars['RoutingNumber'];
-  SafeInt: Scalars['SafeInt'];
-  SemVer: Scalars['SemVer'];
+  RoutingNumber: Scalars["RoutingNumber"];
+  SafeInt: Scalars["SafeInt"];
+  SemVer: Scalars["SemVer"];
   SomethingWentWrong: GqlSomethingWentWrong;
-  String: Scalars['String'];
+  String: Scalars["String"];
   Success: GqlSuccess;
   Time: Scalars['Time'];
   TimeZone: Scalars['TimeZone'];
@@ -649,23 +680,30 @@ export interface GqlNonPositiveFloatScalarConfig extends GraphQLScalarTypeConfig
   name: 'NonPositiveFloat';
 }
 
-export interface GqlNonPositiveIntScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['NonPositiveInt'], any> {
-  name: 'NonPositiveInt';
+export interface GqlNonPositiveIntScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["NonPositiveInt"], any> {
+  name: "NonPositiveInt";
 }
 
-export interface GqlObjectIdScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['ObjectID'], any> {
-  name: 'ObjectID';
+export interface GqlObjectIdScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["ObjectID"], any> {
+  name: "ObjectID";
 }
 
-export interface GqlPhoneNumberScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['PhoneNumber'], any> {
-  name: 'PhoneNumber';
+export type GqlPageDataResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["PageData"] = GqlResolversParentTypes["PageData"]> = {
+  currentPage?: Resolver<GqlResolversTypes["Int"], ParentType, ContextType>;
+  pageSize?: Resolver<GqlResolversTypes["Int"], ParentType, ContextType>;
+  totalPages?: Resolver<GqlResolversTypes["Int"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export interface GqlPhoneNumberScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["PhoneNumber"], any> {
+  name: "PhoneNumber";
 }
 
-export interface GqlPortScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['Port'], any> {
-  name: 'Port';
+export interface GqlPortScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["Port"], any> {
+  name: "Port";
 }
 
-export interface GqlPositiveFloatScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['PositiveFloat'], any> {
+export interface GqlPositiveFloatScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["PositiveFloat"], any> {
   name: 'PositiveFloat';
 }
 
@@ -677,19 +715,27 @@ export interface GqlPostalCodeScalarConfig extends GraphQLScalarTypeConfig<GqlRe
   name: 'PostalCode';
 }
 
-export type GqlProductResolvers<ContextType = any, ParentType extends GqlResolversParentTypes['Product'] = GqlResolversParentTypes['Product']> = {
-  id?: Resolver<GqlResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<GqlResolversTypes['String'], ParentType, ContextType>;
-  price?: Resolver<GqlResolversTypes['Int'], ParentType, ContextType>;
+export type GqlProductResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["Product"] = GqlResolversParentTypes["Product"]> = {
+  attributes?: Resolver<Maybe<GqlResolversTypes["JSONObject"]>, ParentType, ContextType>;
+  id?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
+  name?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
+  price?: Resolver<GqlResolversTypes["Int"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type GqlQueryResolvers<ContextType = any, ParentType extends GqlResolversParentTypes['Query'] = GqlResolversParentTypes['Query']> = {
-  currentUser?: Resolver<GqlResolversTypes['User'], ParentType, ContextType>;
+export type GqlProductsQueryResultResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["ProductsQueryResult"] = GqlResolversParentTypes["ProductsQueryResult"]> = {
+  items?: Resolver<Array<GqlResolversTypes["Product"]>, ParentType, ContextType>;
+  pageData?: Resolver<Maybe<GqlResolversTypes["PageData"]>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export interface GqlRgbScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['RGB'], any> {
-  name: 'RGB';
+export type GqlQueryResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["Query"] = GqlResolversParentTypes["Query"]> = {
+  currentUser?: Resolver<GqlResolversTypes["User"], ParentType, ContextType>;
+  products?: Resolver<GqlResolversTypes["ProductsQueryResult"], ParentType, ContextType, Partial<GqlQueryProductsArgs>>;
+};
+
+export interface GqlRgbScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["RGB"], any> {
+  name: "RGB";
 }
 
 export interface GqlRgbaScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['RGBA'], any> {
@@ -820,12 +866,14 @@ export type GqlResolvers<ContextType = any> = {
   NonPositiveFloat?: GraphQLScalarType;
   NonPositiveInt?: GraphQLScalarType;
   ObjectID?: GraphQLScalarType;
+  PageData?: GqlPageDataResolvers<ContextType>;
   PhoneNumber?: GraphQLScalarType;
   Port?: GraphQLScalarType;
   PositiveFloat?: GraphQLScalarType;
   PositiveInt?: GraphQLScalarType;
   PostalCode?: GraphQLScalarType;
   Product?: GqlProductResolvers<ContextType>;
+  ProductsQueryResult?: GqlProductsQueryResultResolvers<ContextType>;
   Query?: GqlQueryResolvers<ContextType>;
   RGB?: GraphQLScalarType;
   RGBA?: GraphQLScalarType;

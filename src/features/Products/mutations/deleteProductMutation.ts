@@ -12,7 +12,7 @@ export const deleteProductMutation: GqlMutationResolvers<HollofabrikaContext>["d
     async (_, args, context) => {
         roleGuard(context, GqlRole.Admin);
 
-        const [ collection, key ] = args.id.split("/");
+        const [collection, key] = args.id.split("/");
 
         const oldProduct = await querySingle<Document<DbProduct>>(context.db, aql`
             remove ${key} in ${context.db.collection(collection)}

@@ -20,11 +20,9 @@ export const registerMutation: GqlMutationResolvers<HollofabrikaContext>["regist
 		});
 
 		const existed = await trx.step(() => querySingle<DbUser>(context.db, aql`
-			return first(
-				for doc in ${usersCollection}
-				filter doc.username == ${args.username} or doc.email == ${args.email}
-				return doc
-			)
+			for doc in ${usersCollection}
+			filter doc.username == ${args.username} or doc.email == ${args.email}
+			return doc
 		`));
 
 		if (existed) {
