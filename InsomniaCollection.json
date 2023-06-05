@@ -1,13 +1,13 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2023-06-03T18:36:37.360Z",
+  "__export_date": "2023-06-04T19:39:45.728Z",
   "__export_source": "insomnia.desktop.app:v2022.7.5",
   "resources": [
     {
       "_id": "req_0b92ce8f24e44e6faa5a31389142fcad",
       "parentId": "fld_1b8b6718e5164836ac5d4f8972ce6bd2",
-      "modified": 1685809028195,
+      "modified": 1685896090455,
       "created": 1685808938237,
       "url": "localhost:3333/graphql",
       "name": "CreateProduct Mutation",
@@ -15,7 +15,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation {\\n\\tcreateProduct(category: \\\"Тест\\\", product: {\\n\\t\\tname: \\\"Тестовый продукт\\\",\\n\\t\\tprice: 100\\n\\t}) {\\n\\t\\tid\\n\\t\\tname\\n\\t\\tprice\\n\\t}\\n}\"}"
+        "text": "{\"query\":\"mutation {\\n\\tcreateProduct(category: \\\"Тест\\\", product: {\\n\\t\\tname: \\\"Тестовый продукт8\\\",\\n\\t\\tprice: 100\\n\\t}) {\\n\\t\\tid\\n\\t\\tname\\n\\t\\tprice\\n\\t}\\n}\"}"
       },
       "parameters": [],
       "headers": [
@@ -131,7 +131,7 @@
     {
       "_id": "req_20717d41089d4df484e84eae09fd187c",
       "parentId": "fld_36714cb195444783ac386c59b285b229",
-      "modified": 1685808987765,
+      "modified": 1685896093943,
       "created": 1685644944969,
       "url": "localhost:3333/graphql",
       "name": "CreateCategory Mutation",
@@ -177,7 +177,7 @@
     {
       "_id": "req_57ba6d92b8d640dabe1f5a099eafe6c4",
       "parentId": "fld_36714cb195444783ac386c59b285b229",
-      "modified": 1685807480662,
+      "modified": 1685896126470,
       "created": 1685802311581,
       "url": "localhost:3333/graphql",
       "name": "DeleteCategory Mutation",
@@ -185,7 +185,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation {\\n\\tdeleteCategory(name: \\\"Тест1\\\") {\\n\\t\\tcode\\n\\t}\\n}\"}"
+        "text": "{\"query\":\"mutation {\\n\\tdeleteCategory(name: \\\"Тест\\\") {\\n\\t\\tcode\\n\\t}\\n}\"}"
       },
       "parameters": [],
       "headers": [
@@ -245,7 +245,7 @@
     {
       "_id": "req_95dc1be0bb68416696e1cb9999508a9c",
       "parentId": "fld_41c98f83eb954ac78e1847a84e217a22",
-      "modified": 1685467035817,
+      "modified": 1685906242775,
       "created": 1685386343573,
       "url": "localhost:3333/graphql",
       "name": "Register Mutation",

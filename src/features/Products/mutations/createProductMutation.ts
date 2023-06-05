@@ -1,7 +1,6 @@
 import { GqlErrorCode, GqlMutationResolvers, GqlRole } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { roleGuard } from "../../../infrastructure/authGuards.js";
-import { getProductsCollection } from "../../Categories/categories.setup.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { getCategory } from "../../Categories/categories.services.js";
 
@@ -14,16 +13,16 @@ export const createProductMutation: GqlMutationResolvers<HollofabrikaContext>["c
             category,
             isCategoryExists
         } = await getCategory(context.db, args.category);
-        if (isCategoryExists)
+        if (!isCategoryExists)
             throw makeApplicationError("CreateProduct_CategoryNotExists", GqlErrorCode.BadRequest);
 
-        const newProduct = await getProductsCollection(
-            context.db, category.collectionName
-        ).save({
-            name: args.product.name,
-            price: args.product.price,
-            attributes: args.product.attributes
-        }, { returnNew: true });
+        const newProduct = await context.db
+            .collection(category.collectionName)
+            .save({
+                name: args.product.name,
+                price: args.product.price,
+                attributes: args.product.attributes
+            }, { returnNew: true });
 
         return {
             id: newProduct.new!._id,

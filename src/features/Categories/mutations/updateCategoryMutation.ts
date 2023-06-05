@@ -15,12 +15,12 @@ export const updateCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
             category,
             isCategoryExists
         } = await getCategory(context.db, args.originalName);
-        if (isCategoryExists)
+        if (!isCategoryExists)
             throw makeApplicationError("UpdateCategory_CategoryNotExists", GqlErrorCode.BadRequest);
 
-        const productsCollection = await getProductsCollection(
-            context.db, category.collectionName
-        ).rename(args.newName);
+        const productsCollection = await context.db
+            .collection(category.collectionName)
+            .rename(getProductsCollection(context.db, crypto.randomUUID()).name);
 
         await categoriesCollection.update({ _key: category._key }, {
             collectionName: productsCollection.name

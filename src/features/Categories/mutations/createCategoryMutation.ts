@@ -17,7 +17,7 @@ export const createCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
         if (isCategoryExists)
             throw makeApplicationError("CreateCategory_CategoryExists", GqlErrorCode.BadRequest);
 
-        const productsCollection = getProductsCollection(context.db, args.name);
+        const productsCollection = getProductsCollection(context.db, crypto.randomUUID());
         await categoriesCollection.save({
             name: args.name,
             collectionName: productsCollection.name

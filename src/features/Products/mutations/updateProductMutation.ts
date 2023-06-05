@@ -12,7 +12,7 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
     async (_, args, context) => {
         roleGuard(context, GqlRole.Admin);
 
-        const [ collection, key ] = args.id.split("/");
+        const [collection, key] = args.id.split("/");
 
         const productToInsert = args.product satisfies DbProduct;
 
