@@ -16,7 +16,7 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
 
         const productToInsert = args.product satisfies DbProduct;
 
-        const newProduct = await querySingle<Document<DbProduct>>(context.db, aql`
+        const { item: newProduct } = await querySingle<Document<DbProduct>>(context.db, aql`
             update ${key} with ${productToInsert} in ${context.db.collection(collection)}
             options { ignoreErrors: true }
             return NEW

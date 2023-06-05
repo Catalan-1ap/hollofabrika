@@ -14,7 +14,7 @@ export const deleteProductMutation: GqlMutationResolvers<HollofabrikaContext>["d
 
         const [collection, key] = args.id.split("/");
 
-        const oldProduct = await querySingle<Document<DbProduct>>(context.db, aql`
+        const { item: oldProduct } = await querySingle<Document<DbProduct>>(context.db, aql`
             remove ${key} in ${context.db.collection(collection)}
             options { ignoreErrors: true }
             return OLD

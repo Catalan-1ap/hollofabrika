@@ -1,5 +1,6 @@
 type Query {
     products(ids: [String], pageData: PageDataInput): ProductsQueryResult!
+    product(id: String!): Product!
 }
 
 type Mutation {

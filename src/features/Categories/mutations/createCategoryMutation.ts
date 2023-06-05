@@ -27,7 +27,8 @@ export const createCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
             links: {
                 [productsCollection.name]: {
                     analyzers: ["identity"],
-                    includeAllFields: true
+                    includeAllFields: true,
+                    inBackground: true
                 }
             }
         });

@@ -7,7 +7,7 @@ input PageDataInput {
 
 type PageData {
     totalPages: Int!
-    currentPage: Int!,
+    page: Int!,
     pageSize: Int!
 }
 

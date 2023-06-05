@@ -7,7 +7,7 @@ import { aql, Database } from "arangojs";
 
 export async function getCategory(db: Database, categoryName: string) {
     const categoriesCollection = getCategoriesCollection(db);
-    const category = await querySingle<Document<DbCategory>>(db, aql`
+    const { item: category } = await querySingle<Document<DbCategory>>(db, aql`
 			for doc in ${categoriesCollection}
 			filter doc.name == ${categoryName}
 			return doc

@@ -8,26 +8,26 @@ import { getTemporalTokensCollection, getUsersCollection } from "../users.setup.
 
 
 export const verifyEmailMutation: GqlMutationResolvers<HollofabrikaContext>["verifyEmail"] =
-	async (_, args, context) => {
-		const temporalTokensCollection = getTemporalTokensCollection(context.db);
+    async (_, args, context) => {
+        const temporalTokensCollection = getTemporalTokensCollection(context.db);
 
-		const registerToken = await querySingle<DbRegisterTemporalToken>(context.db, aql`
+        const { item: registerToken } = await querySingle<DbRegisterTemporalToken>(context.db, aql`
 			for doc in ${temporalTokensCollection}
 			filter doc.type == "register" and doc.emailToken == ${args.emailToken} and doc.confirmToken == ${args.confirmToken}
 			remove doc in ${temporalTokensCollection}
 			return OLD
 		`);
-		if (!registerToken)
-			throw makeApplicationError("VerifyEmail_WrongToken", GqlErrorCode.BadRequest);
+        if (!registerToken)
+            throw makeApplicationError("VerifyEmail_WrongToken", GqlErrorCode.BadRequest);
 
-		const usersCollection = getUsersCollection(context.db);
+        const usersCollection = getUsersCollection(context.db);
 
-		await usersCollection.save({
-			...registerToken.payload,
-			role: GqlRole.Standalone
-		});
+        await usersCollection.save({
+            ...registerToken.payload,
+            role: GqlRole.Standalone
+        });
 
-		return {
-			code: GqlSuccessCode.Oke
-		};
-	};
+        return {
+            code: GqlSuccessCode.Oke
+        };
+    };
