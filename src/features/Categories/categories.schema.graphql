@@ -1,5 +1,14 @@
+type Query {
+    categories: [Category!]!
+}
+
 type Mutation {
     createCategory(name: String!): Success!
     deleteCategory(name: String!): Success!
     updateCategory(originalName: String!, newName: String!): Success!
+}
+
+type Category {
+    name: String!
+    attributes: JSONObject
 }

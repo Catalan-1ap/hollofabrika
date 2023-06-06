@@ -30,27 +30,27 @@ export type Scalars = {
   GUID: any;
   HSL: any;
   HSLA: any;
-  HexColorCode: any;
-  Hexadecimal: any;
-  IBAN: any;
-  IP: any;
-  IPCPatent: any;
-  IPv4: any;
-  IPv6: any;
-  ISBN: any;
-  ISO8601Duration: any;
-  JSON: any;
-  JSONObject: Record<string, string>;
-  JWT: any;
-  LCCSubclass: any;
-  Latitude: any;
-  LocalDate: any;
-  LocalDateTime: any;
-  LocalEndTime: any;
-  LocalTime: any;
-  Locale: any;
-  Long: any;
-  Longitude: any;
+    HexColorCode: any;
+    Hexadecimal: any;
+    IBAN: any;
+    IP: any;
+    IPCPatent: any;
+    IPv4: any;
+    IPv6: any;
+    ISBN: any;
+    ISO8601Duration: any;
+    JSON: any;
+    JSONObject: Record<string, any>;
+    JWT: any;
+    LCCSubclass: any;
+    Latitude: any;
+    LocalDate: any;
+    LocalDateTime: any;
+    LocalEndTime: any;
+    LocalTime: any;
+    Locale: any;
+    Long: any;
+    Longitude: any;
   MAC: any;
   NegativeFloat: any;
   NegativeInt: any;
@@ -72,14 +72,19 @@ export type Scalars = {
   SemVer: any;
   Time: any;
   TimeZone: any;
-  Timestamp: any;
-  URL: any;
-  USCurrency: any;
-  UUID: any;
-  UnsignedFloat: any;
-  UnsignedInt: any;
-  UtcOffset: any;
-  Void: any;
+    Timestamp: any;
+    URL: any;
+    USCurrency: any;
+    UUID: any;
+    UnsignedFloat: any;
+    UnsignedInt: any;
+    UtcOffset: any;
+    Void: any;
+};
+
+export type GqlCategory = {
+    attributes?: Maybe<Scalars["JSONObject"]>;
+    name: Scalars["String"];
 };
 
 export type GqlCreateProductArgs = {
@@ -89,8 +94,8 @@ export type GqlCreateProductArgs = {
 };
 
 export type GqlError = {
-  code?: Maybe<GqlErrorCode>;
-  message: Scalars['String'];
+    code?: Maybe<GqlErrorCode>;
+    message: Scalars["String"];
 };
 
 export enum GqlErrorCode {
@@ -192,11 +197,12 @@ export type GqlProduct = {
 };
 
 export type GqlProductsQueryResult = {
-  items: Array<GqlProduct>;
+    items: Array<GqlProduct>;
     pageData?: Maybe<GqlPageData>;
 };
 
 export type GqlQuery = {
+    categories: Array<GqlCategory>;
     currentUser: GqlUser;
     product: GqlProduct;
     products: GqlProductsQueryResult;
@@ -312,20 +318,21 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type GqlResolversTypes = {
-  AccountNumber: ResolverTypeWrapper<Scalars['AccountNumber']>;
-  BigInt: ResolverTypeWrapper<Scalars['BigInt']>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  Byte: ResolverTypeWrapper<Scalars['Byte']>;
-  CountryCode: ResolverTypeWrapper<Scalars['CountryCode']>;
-  CreateProductArgs: GqlCreateProductArgs;
-  Cuid: ResolverTypeWrapper<Scalars['Cuid']>;
-  Currency: ResolverTypeWrapper<Scalars['Currency']>;
-  DID: ResolverTypeWrapper<Scalars['DID']>;
-  Date: ResolverTypeWrapper<Scalars['Date']>;
-  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
-  DateTimeISO: ResolverTypeWrapper<Scalars['DateTimeISO']>;
-  DeweyDecimal: ResolverTypeWrapper<Scalars['DeweyDecimal']>;
-  Duration: ResolverTypeWrapper<Scalars['Duration']>;
+    AccountNumber: ResolverTypeWrapper<Scalars["AccountNumber"]>;
+    BigInt: ResolverTypeWrapper<Scalars["BigInt"]>;
+    Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
+    Byte: ResolverTypeWrapper<Scalars["Byte"]>;
+    Category: ResolverTypeWrapper<GqlCategory>;
+    CountryCode: ResolverTypeWrapper<Scalars["CountryCode"]>;
+    CreateProductArgs: GqlCreateProductArgs;
+    Cuid: ResolverTypeWrapper<Scalars["Cuid"]>;
+    Currency: ResolverTypeWrapper<Scalars["Currency"]>;
+    DID: ResolverTypeWrapper<Scalars["DID"]>;
+    Date: ResolverTypeWrapper<Scalars["Date"]>;
+    DateTime: ResolverTypeWrapper<Scalars["DateTime"]>;
+    DateTimeISO: ResolverTypeWrapper<Scalars["DateTimeISO"]>;
+    DeweyDecimal: ResolverTypeWrapper<Scalars["DeweyDecimal"]>;
+    Duration: ResolverTypeWrapper<Scalars["Duration"]>;
   EmailAddress: ResolverTypeWrapper<Scalars['EmailAddress']>;
   Error: ResolverTypeWrapper<GqlError>;
   ErrorCode: GqlErrorCode;
@@ -335,16 +342,16 @@ export type GqlResolversTypes = {
   HexColorCode: ResolverTypeWrapper<Scalars['HexColorCode']>;
   Hexadecimal: ResolverTypeWrapper<Scalars['Hexadecimal']>;
   IBAN: ResolverTypeWrapper<Scalars['IBAN']>;
-  IP: ResolverTypeWrapper<Scalars['IP']>;
-  IPCPatent: ResolverTypeWrapper<Scalars['IPCPatent']>;
-  IPv4: ResolverTypeWrapper<Scalars['IPv4']>;
-  IPv6: ResolverTypeWrapper<Scalars['IPv6']>;
-  ISBN: ResolverTypeWrapper<Scalars['ISBN']>;
-  ISO8601Duration: ResolverTypeWrapper<Scalars['ISO8601Duration']>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
-  JSON: ResolverTypeWrapper<Scalars['JSON']>;
-  JSONObject: ResolverTypeWrapper<Scalars['JSONObject']>;
-  JWT: ResolverTypeWrapper<Scalars['JWT']>;
+    IP: ResolverTypeWrapper<Scalars["IP"]>;
+    IPCPatent: ResolverTypeWrapper<Scalars["IPCPatent"]>;
+    IPv4: ResolverTypeWrapper<Scalars["IPv4"]>;
+    IPv6: ResolverTypeWrapper<Scalars["IPv6"]>;
+    ISBN: ResolverTypeWrapper<Scalars["ISBN"]>;
+    ISO8601Duration: ResolverTypeWrapper<Scalars["ISO8601Duration"]>;
+    Int: ResolverTypeWrapper<Scalars["Int"]>;
+    JSON: ResolverTypeWrapper<Scalars["JSON"]>;
+    JSONObject: ResolverTypeWrapper<Scalars["JSONObject"]>;
+    JWT: ResolverTypeWrapper<Scalars["JWT"]>;
     JwtToken: ResolverTypeWrapper<GqlJwtToken>;
     LCCSubclass: ResolverTypeWrapper<Scalars["LCCSubclass"]>;
     Latitude: ResolverTypeWrapper<Scalars["Latitude"]>;
@@ -394,27 +401,28 @@ export type GqlResolversTypes = {
     UUID: ResolverTypeWrapper<Scalars["UUID"]>;
     UnsignedFloat: ResolverTypeWrapper<Scalars["UnsignedFloat"]>;
     UnsignedInt: ResolverTypeWrapper<Scalars["UnsignedInt"]>;
-  User: ResolverTypeWrapper<GqlUser>;
-  UtcOffset: ResolverTypeWrapper<Scalars['UtcOffset']>;
-  Void: ResolverTypeWrapper<Scalars['Void']>;
+    User: ResolverTypeWrapper<GqlUser>;
+    UtcOffset: ResolverTypeWrapper<Scalars["UtcOffset"]>;
+    Void: ResolverTypeWrapper<Scalars["Void"]>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type GqlResolversParentTypes = {
-  AccountNumber: Scalars['AccountNumber'];
-  BigInt: Scalars['BigInt'];
-  Boolean: Scalars['Boolean'];
-  Byte: Scalars['Byte'];
-  CountryCode: Scalars['CountryCode'];
-  CreateProductArgs: GqlCreateProductArgs;
-  Cuid: Scalars['Cuid'];
-  Currency: Scalars['Currency'];
-  DID: Scalars['DID'];
-  Date: Scalars['Date'];
-  DateTime: Scalars['DateTime'];
-  DateTimeISO: Scalars['DateTimeISO'];
-  DeweyDecimal: Scalars['DeweyDecimal'];
-  Duration: Scalars['Duration'];
+    AccountNumber: Scalars["AccountNumber"];
+    BigInt: Scalars["BigInt"];
+    Boolean: Scalars["Boolean"];
+    Byte: Scalars["Byte"];
+    Category: GqlCategory;
+    CountryCode: Scalars["CountryCode"];
+    CreateProductArgs: GqlCreateProductArgs;
+    Cuid: Scalars["Cuid"];
+    Currency: Scalars["Currency"];
+    DID: Scalars["DID"];
+    Date: Scalars["Date"];
+    DateTime: Scalars["DateTime"];
+    DateTimeISO: Scalars["DateTimeISO"];
+    DeweyDecimal: Scalars["DeweyDecimal"];
+    Duration: Scalars["Duration"];
   EmailAddress: Scalars['EmailAddress'];
   Error: GqlError;
   GUID: Scalars['GUID'];
@@ -423,16 +431,16 @@ export type GqlResolversParentTypes = {
   HexColorCode: Scalars['HexColorCode'];
   Hexadecimal: Scalars['Hexadecimal'];
   IBAN: Scalars['IBAN'];
-  IP: Scalars['IP'];
-  IPCPatent: Scalars['IPCPatent'];
-  IPv4: Scalars['IPv4'];
-  IPv6: Scalars['IPv6'];
-  ISBN: Scalars['ISBN'];
-  ISO8601Duration: Scalars['ISO8601Duration'];
-  Int: Scalars['Int'];
-  JSON: Scalars['JSON'];
-  JSONObject: Scalars['JSONObject'];
-  JWT: Scalars['JWT'];
+    IP: Scalars["IP"];
+    IPCPatent: Scalars["IPCPatent"];
+    IPv4: Scalars["IPv4"];
+    IPv6: Scalars["IPv6"];
+    ISBN: Scalars["ISBN"];
+    ISO8601Duration: Scalars["ISO8601Duration"];
+    Int: Scalars["Int"];
+    JSON: Scalars["JSON"];
+    JSONObject: Scalars["JSONObject"];
+    JWT: Scalars["JWT"];
     JwtToken: GqlJwtToken;
     LCCSubclass: Scalars["LCCSubclass"];
     Latitude: Scalars["Latitude"];
@@ -481,31 +489,37 @@ export type GqlResolversParentTypes = {
     UnsignedFloat: Scalars["UnsignedFloat"];
     UnsignedInt: Scalars["UnsignedInt"];
     User: GqlUser;
-  UtcOffset: Scalars['UtcOffset'];
-  Void: Scalars['Void'];
+    UtcOffset: Scalars["UtcOffset"];
+    Void: Scalars["Void"];
 };
 
 export interface GqlAccountNumberScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['AccountNumber'], any> {
   name: 'AccountNumber';
 }
 
-export interface GqlBigIntScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['BigInt'], any> {
-  name: 'BigInt';
+export interface GqlBigIntScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["BigInt"], any> {
+    name: "BigInt";
 }
 
-export interface GqlByteScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['Byte'], any> {
-  name: 'Byte';
+export interface GqlByteScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["Byte"], any> {
+    name: "Byte";
 }
 
-export interface GqlCountryCodeScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['CountryCode'], any> {
-  name: 'CountryCode';
+export type GqlCategoryResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["Category"] = GqlResolversParentTypes["Category"]> = {
+    attributes?: Resolver<Maybe<GqlResolversTypes["JSONObject"]>, ParentType, ContextType>;
+    name?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export interface GqlCountryCodeScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["CountryCode"], any> {
+    name: "CountryCode";
 }
 
-export interface GqlCuidScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['Cuid'], any> {
-  name: 'Cuid';
+export interface GqlCuidScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["Cuid"], any> {
+    name: "Cuid";
 }
 
-export interface GqlCurrencyScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['Currency'], any> {
+export interface GqlCurrencyScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["Currency"], any> {
   name: 'Currency';
 }
 
@@ -736,6 +750,7 @@ export type GqlProductsQueryResultResolvers<ContextType = any, ParentType extend
 };
 
 export type GqlQueryResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["Query"] = GqlResolversParentTypes["Query"]> = {
+    categories?: Resolver<Array<GqlResolversTypes["Category"]>, ParentType, ContextType>;
     currentUser?: Resolver<GqlResolversTypes["User"], ParentType, ContextType>;
     product?: Resolver<GqlResolversTypes["Product"], ParentType, ContextType, RequireFields<GqlQueryProductArgs, "id">>;
     products?: Resolver<GqlResolversTypes["ProductsQueryResult"], ParentType, ContextType, Partial<GqlQueryProductsArgs>>;
@@ -824,19 +839,20 @@ export interface GqlVoidScalarConfig extends GraphQLScalarTypeConfig<GqlResolver
 }
 
 export type GqlResolvers<ContextType = any> = {
-  AccountNumber?: GraphQLScalarType;
-  BigInt?: GraphQLScalarType;
-  Byte?: GraphQLScalarType;
-  CountryCode?: GraphQLScalarType;
-  Cuid?: GraphQLScalarType;
-  Currency?: GraphQLScalarType;
-  DID?: GraphQLScalarType;
-  Date?: GraphQLScalarType;
-  DateTime?: GraphQLScalarType;
-  DateTimeISO?: GraphQLScalarType;
-  DeweyDecimal?: GraphQLScalarType;
-  Duration?: GraphQLScalarType;
-  EmailAddress?: GraphQLScalarType;
+    AccountNumber?: GraphQLScalarType;
+    BigInt?: GraphQLScalarType;
+    Byte?: GraphQLScalarType;
+    Category?: GqlCategoryResolvers<ContextType>;
+    CountryCode?: GraphQLScalarType;
+    Cuid?: GraphQLScalarType;
+    Currency?: GraphQLScalarType;
+    DID?: GraphQLScalarType;
+    Date?: GraphQLScalarType;
+    DateTime?: GraphQLScalarType;
+    DateTimeISO?: GraphQLScalarType;
+    DeweyDecimal?: GraphQLScalarType;
+    Duration?: GraphQLScalarType;
+    EmailAddress?: GraphQLScalarType;
   Error?: GqlErrorResolvers<ContextType>;
   GUID?: GraphQLScalarType;
   HSL?: GraphQLScalarType;

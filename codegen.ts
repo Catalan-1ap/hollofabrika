@@ -9,7 +9,7 @@ const config: CodegenConfig = {
       plugins: ["typescript", "typescript-resolvers"],
       config: {
         scalars: {
-          JSONObject: "Record<string, string>"
+          JSONObject: "Record<string, any>"
         },
         typesPrefix: "Gql",
         maybeValue: "T | undefined",

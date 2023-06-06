@@ -1,3 +1,8 @@
+import { categoriesQuery } from "./queries/categoriesQuery.js";
+
+
 export default {
-	Query: {}
+    Query: {
+        categories: categoriesQuery
+    }
 };
