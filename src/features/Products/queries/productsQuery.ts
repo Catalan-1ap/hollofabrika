@@ -16,10 +16,18 @@ export const productsQuery: GqlQueryResolvers<HollofabrikaContext>["products"] =
             pageSize: defaultPageSize
         };
 
-        const filterbByIds = args.input.ids?.length! > 0 ? aql`filter doc._id in ${args.input.ids}` : aql``;
+        const filterbByIds = args.input.ids?.length! > 0
+            ? aql`filter doc._id in ${args.input.ids}`
+            : aql``;
+
+        const filterbByCategory = args.input.categories?.length! > 0
+            ? aql`filter parse_identifier(doc._id).collection in ${args.input.categories}`
+            : aql``;
+
         const { items, depletedCursor } = await queryAll<GqlProduct>(context.db, aql`
             for doc in ${allProductsView}
             ${filterbByIds}
+            ${filterbByCategory}
             limit ${args.input.pageData.pageSize * (args.input.pageData.page - 1)}, ${args.input.pageData.pageSize}
             return {
                 id: doc._id,
