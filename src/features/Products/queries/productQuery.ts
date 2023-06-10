@@ -16,6 +16,7 @@ export const productQuery: GqlQueryResolvers<HollofabrikaContext>["product"] =
             return {
                 id: doc._id,
                 name: doc.name,
+                description: doc.description,
                 price: doc.price,
                 attributes: doc.attributes
             }

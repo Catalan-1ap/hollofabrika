@@ -1,6 +1,6 @@
 import { roleGuard } from "../../../infrastructure/authGuards.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
-import { GqlErrorCode, GqlMutationResolvers, GqlRole, GqlSuccessCode } from "../../../infrastructure/gqlTypes.js";
+import { GqlErrorCode, GqlMutationResolvers, GqlRole } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { getAllProductsView, getProductsCollection } from "../categories.setup.js";
 import { getCategory } from "../categories.services.js";
@@ -18,10 +18,11 @@ export const createCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
             throw makeApplicationError("CreateCategory_CategoryExists", GqlErrorCode.BadRequest);
 
         const productsCollection = getProductsCollection(context.db, crypto.randomUUID());
-        await categoriesCollection.save({
+        const newCategory = await categoriesCollection.save({
             name: args.name,
-            collectionName: productsCollection.name
-        });
+            collectionName: productsCollection.name,
+            attributes: {}
+        }, { returnNew: true });
         await productsCollection.create();
         await getAllProductsView(context.db).updateProperties({
             links: {
@@ -34,6 +35,7 @@ export const createCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
         });
 
         return {
-            code: GqlSuccessCode.Oke
+            name: newCategory.new!.name,
+            attributes: newCategory.new!.attributes
         };
     };

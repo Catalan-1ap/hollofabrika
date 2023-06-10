@@ -26,15 +26,15 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
         });
 
         try {
-            const { item: { before, after } } = await trx.step(() => querySingle<{
-                before: Document<DbProduct>,
-                after: Document<DbProduct>
+            const { item: { beforeUpdate, afterUpdate } } = await trx.step(() => querySingle<{
+                beforeUpdate: Document<DbProduct>,
+                afterUpdate: Document<DbProduct>
             }>(context.db, aql`
                 update ${key} with ${productToInsert} in ${productsCollection}
                 options { ignoreErrors: true }
                 return { before: OLD, after: NEW }
             `));
-            if (!after)
+            if (!afterUpdate)
                 throw makeApplicationError("UpdateProduct_ProductNotExists", GqlErrorCode.BadRequest);
 
             const { item: category } = await trx.step(() =>
@@ -45,8 +45,8 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
                 `)
             );
 
-            removeAttributes(category, before);
-            addAttributes(category, after);
+            removeAttributes(category, beforeUpdate);
+            addAttributes(category, afterUpdate);
 
             await trx.step(() => context.db.query(aql`
                 update ${category}
@@ -56,10 +56,11 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
 
             await trx.commit();
             return {
-                id: after._id,
-                name: after.name,
-                price: after.price,
-                attributes: after.attributes
+                id: afterUpdate._id,
+                description: afterUpdate.description,
+                name: afterUpdate.name,
+                price: afterUpdate.price,
+                attributes: afterUpdate.attributes
             };
         } catch (e) {
             await trx.abort();

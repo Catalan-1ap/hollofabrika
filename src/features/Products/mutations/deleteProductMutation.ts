@@ -46,12 +46,13 @@ export const deleteProductMutation: GqlMutationResolvers<HollofabrikaContext>["d
             await trx.step(() => context.db.query(aql`
                 update ${category}
                 with ${category} in ${categoriesCollection}
-                options { ignoreRevs: false }
+                options { ignoreRevs: false, keepNull: false }
             `));
 
             await trx.commit();
             return {
                 id: oldProduct._id,
+                description: oldProduct.description,
                 name: oldProduct.name,
                 price: oldProduct.price,
                 attributes: oldProduct.attributes
@@ -74,7 +75,14 @@ export function removeAttributes(category: DbCategory, product: DbProduct) {
         const attribute = attributes.filter(x => x.value === value)[0];
         attribute.count--;
 
-        if (attribute.count <= 0)
+        if (attribute.count <= 0) {
             category.attributes[key] = attributes.filter(x => x !== attribute);
+
+            if (category.attributes[key].length === 0) {
+                // @ts-ignore
+                category.attributes[key] = null;
+            }
+        }
+
     }
 }

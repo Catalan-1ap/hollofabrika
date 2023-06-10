@@ -1,4 +1,4 @@
-import { GqlErrorCode, GqlMutationResolvers, GqlRole, GqlSuccessCode } from "../../../infrastructure/gqlTypes.js";
+import { GqlErrorCode, GqlMutationResolvers, GqlRole } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { roleGuard } from "../../../infrastructure/authGuards.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
@@ -17,12 +17,13 @@ export const deleteCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
         if (!isCategoryExists)
             throw makeApplicationError("DeleteCategory_CategoryNotExists", GqlErrorCode.BadRequest);
 
-        await context.db.collection(category.collectionName).drop();
-        await categoriesCollection.remove({
+        const oldCategory = await categoriesCollection.remove({
             _key: category._key
-        });
+        }, { returnOld: true });
+        await context.db.collection(category.collectionName).drop();
 
         return {
-            code: GqlSuccessCode.Oke
+            name: oldCategory.old!.name,
+            attributes: oldCategory.old!.attributes
         };
     };

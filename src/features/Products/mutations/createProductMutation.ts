@@ -19,8 +19,9 @@ export const createProductMutation: GqlMutationResolvers<HollofabrikaContext>["c
         if (!isCategoryExists)
             throw makeApplicationError("CreateProduct_CategoryNotExists", GqlErrorCode.BadRequest);
 
-        const productToInsert = {
+        const productToInsert: DbProduct = {
             name: args.product.name,
+            description: args.product.description,
             price: args.product.price,
             attributes: args.product.attributes
         };
@@ -46,6 +47,7 @@ export const createProductMutation: GqlMutationResolvers<HollofabrikaContext>["c
             await trx.commit();
             return {
                 id: newProduct.new!._id,
+                description: newProduct.new!.description,
                 name: newProduct.new!.name,
                 price: newProduct.new!.price,
                 attributes: newProduct.new!.attributes

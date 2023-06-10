@@ -1,4 +1,4 @@
-import { GqlErrorCode, GqlMutationResolvers, GqlRole, GqlSuccessCode } from "../../../infrastructure/gqlTypes.js";
+import { GqlErrorCode, GqlMutationResolvers, GqlRole } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { roleGuard } from "../../../infrastructure/authGuards.js";
 import { getProductsCollection } from "../categories.setup.js";
@@ -22,11 +22,12 @@ export const updateCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
             .collection(category.collectionName)
             .rename(getProductsCollection(context.db, crypto.randomUUID()).name);
 
-        await categoriesCollection.update({ _key: category._key }, {
+        const afterUpdate = await categoriesCollection.update({ _key: category._key }, {
             collectionName: productsCollection.name
-        });
+        }, { returnNew: true });
 
         return {
-            code: GqlSuccessCode.Oke
+            name: afterUpdate.new!.name,
+            attributes: afterUpdate.new!.attributes
         };
     };

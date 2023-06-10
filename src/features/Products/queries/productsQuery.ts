@@ -10,19 +10,21 @@ export const productsQuery: GqlQueryResolvers<HollofabrikaContext>["products"] =
     async (_, args, context) => {
         const allProductsView = getAllProductsView(context.db);
 
-        args.pageData ||= {
+        args.input ||= {};
+        args.input.pageData ||= {
             page: 1,
             pageSize: defaultPageSize
         };
 
-        const filterbByIds = args.ids?.length! > 0 ? aql`filter doc._id in ${args.ids}` : aql``;
+        const filterbByIds = args.input.ids?.length! > 0 ? aql`filter doc._id in ${args.input.ids}` : aql``;
         const { items, depletedCursor } = await queryAll<GqlProduct>(context.db, aql`
             for doc in ${allProductsView}
             ${filterbByIds}
-            limit ${args.pageData.pageSize * (args.pageData.page - 1)}, ${args.pageData.pageSize}
+            limit ${args.input.pageData.pageSize * (args.input.pageData.page - 1)}, ${args.input.pageData.pageSize}
             return {
                 id: doc._id,
                 name: doc.name,
+                description: doc.description,
                 price: doc.price,
                 attributes: doc.attributes
             }
@@ -30,9 +32,9 @@ export const productsQuery: GqlQueryResolvers<HollofabrikaContext>["products"] =
 
         return {
             pageData: {
-                ...args.pageData,
-                totalPages: depletedCursor.extra.stats?.fullCount! > args.pageData.pageSize
-                    ? Math.ceil(depletedCursor.extra.stats?.fullCount! / args.pageData.pageSize)
+                ...args.input.pageData,
+                totalPages: depletedCursor.extra.stats?.fullCount! > args.input.pageData.pageSize
+                    ? Math.ceil(depletedCursor.extra.stats?.fullCount! / args.input.pageData.pageSize)
                     : 1
             },
             items: items
