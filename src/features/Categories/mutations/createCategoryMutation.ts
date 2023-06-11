@@ -4,6 +4,7 @@ import { GqlErrorCode, GqlMutationResolvers, GqlRole } from "../../../infrastruc
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { getAllProductsView, getProductsCollection } from "../categories.setup.js";
 import { getCategory } from "../categories.services.js";
+import { transaction } from "../../../infrastructure/arangoUtils.js";
 
 
 export const createCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["createCategory"] =
@@ -18,24 +19,30 @@ export const createCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
             throw makeApplicationError("CreateCategory_CategoryExists", GqlErrorCode.BadRequest);
 
         const productsCollection = getProductsCollection(context.db, crypto.randomUUID());
-        const newCategory = await categoriesCollection.save({
-            name: args.name,
-            collectionName: productsCollection.name,
-            attributes: {}
-        }, { returnNew: true });
-        await productsCollection.create();
-        await getAllProductsView(context.db).updateProperties({
-            links: {
-                [productsCollection.name]: {
-                    analyzers: ["identity"],
-                    includeAllFields: true,
-                    inBackground: true
-                }
-            }
-        });
 
-        return {
-            name: newCategory.new!.name,
-            attributes: newCategory.new!.attributes
-        };
+        return await transaction(context.db, {
+            exclusive: [categoriesCollection]
+        }, async trx => {
+            const newCategory = await trx.step(() => categoriesCollection.save({
+                    name: args.name,
+                    collectionName: productsCollection.name,
+                    attributes: []
+                }, { returnNew: true })
+            );
+            await trx.step(() => productsCollection.create());
+            await trx.step(() => getAllProductsView(context.db).updateProperties({
+                links: {
+                    [productsCollection.name]: {
+                        analyzers: ["identity"],
+                        includeAllFields: true,
+                        inBackground: true
+                    }
+                }
+            }));
+
+            return {
+                name: newCategory.new!.name,
+                attributes: newCategory.new!.attributes
+            };
+        });
     };

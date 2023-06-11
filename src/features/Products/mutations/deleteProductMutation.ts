@@ -2,7 +2,7 @@ import { GqlErrorCode, GqlMutationResolvers, GqlRole } from "../../../infrastruc
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { roleGuard } from "../../../infrastructure/authGuards.js";
 import { aql } from "arangojs";
-import { querySingle } from "../../../infrastructure/arangoUtils.js";
+import { querySingle, transaction } from "../../../infrastructure/arangoUtils.js";
 import { DbCategory, DbProduct } from "../../../infrastructure/dbTypes.js";
 import { Document } from "arangojs/documents.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
@@ -17,12 +17,10 @@ export const deleteProductMutation: GqlMutationResolvers<HollofabrikaContext>["d
         const productsCollection = context.db.collection(collection);
         const categoriesCollection = getCategoriesCollection(context.db);
 
-        const trx = await context.db.beginTransaction({
+        return await transaction(context.db, {
             write: [productsCollection],
             exclusive: [categoriesCollection]
-        });
-
-        try {
+        }, async trx => {
             const { item: oldProduct } = await trx.step(() =>
                 querySingle<Document<DbProduct>>(context.db, aql`
                     remove ${key} in ${productsCollection}
@@ -30,6 +28,7 @@ export const deleteProductMutation: GqlMutationResolvers<HollofabrikaContext>["d
                     return OLD
                 `)
             );
+
             if (!oldProduct)
                 throw makeApplicationError("DeleteProduct_ProductNotExists", GqlErrorCode.BadRequest);
 
@@ -49,40 +48,29 @@ export const deleteProductMutation: GqlMutationResolvers<HollofabrikaContext>["d
                 options { ignoreRevs: false, keepNull: false }
             `));
 
-            await trx.commit();
             return {
                 id: oldProduct._id,
+                category: category.name,
                 description: oldProduct.description,
                 name: oldProduct.name,
                 price: oldProduct.price,
                 attributes: oldProduct.attributes
             };
-        } catch (e) {
-            await trx.abort();
-            throw e;
-        }
+        })
     };
 
 export function removeAttributes(category: DbCategory, product: DbProduct) {
-    category.attributes ??= {};
+    for (let attribute of product.attributes) {
+        const categoryAttributeIndex = category.attributes
+            .findIndex(x => x.name === attribute.name);
+        const categoryAttribute = category.attributes[categoryAttributeIndex];
 
-    for (const [key, value] of Object.entries(product.attributes ?? {})) {
-        const attributes = category.attributes?.[key];
-
-        if (!attributes)
+        if (!categoryAttribute)
             continue;
 
-        const attribute = attributes.filter(x => x.value === value)[0];
-        attribute.count--;
+        categoryAttribute.count--;
 
-        if (attribute.count <= 0) {
-            category.attributes[key] = attributes.filter(x => x !== attribute);
-
-            if (category.attributes[key].length === 0) {
-                // @ts-ignore
-                category.attributes[key] = null;
-            }
-        }
-
+        if (categoryAttribute.count <= 0)
+            category.attributes.splice(categoryAttributeIndex, 1);
     }
 }

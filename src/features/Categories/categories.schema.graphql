@@ -10,5 +10,11 @@ type Mutation {
 
 type Category {
     name: String!
-    attributes: JSONObject
+    attributes: [CategoryAttribute]!
+}
+
+type CategoryAttribute {
+    name: String!
+    value: String!
+    count: Int!
 }

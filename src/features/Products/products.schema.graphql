@@ -6,13 +6,13 @@ type Query {
 type Mutation {
     createProduct(category: String!, product: CreateProductArgs!): Product!
     deleteProduct(id: String!): Product!
-    updateProduct(id: String!, product: CreateProductArgs!): Product!
+    updateProduct(id: String!, product: UpdateProductArgs!): Product!
 }
 
 input ProductsQueryInput {
     ids: [String]
     categories: [String]
-    filters: JSONObject
+    filters: [ProductInputAttribute!]
     pageData: PageDataInput
 }
 
@@ -25,7 +25,14 @@ input CreateProductArgs {
     name: String!
     description: String!
     price: Int!
-    attributes: JSONObject
+    attributes: [ProductInputAttribute!]!
+}
+
+input UpdateProductArgs {
+    name: String
+    description: String
+    price: Int
+    attributes: [ProductInputAttribute!]
 }
 
 type Product {
@@ -34,5 +41,15 @@ type Product {
     description: String!
     name: String!
     price: Int!
-    attributes: JSONObject
+    attributes: [ProductAttribute!]!
+}
+
+type ProductAttribute {
+    name: String!
+    value: String!
+}
+
+input ProductInputAttribute {
+    name: String!
+    value: String!
 }

@@ -1,13 +1,13 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2023-06-10T10:50:56.657Z",
+  "__export_date": "2023-06-11T19:06:25.811Z",
   "__export_source": "insomnia.desktop.app:v2022.7.5",
   "resources": [
     {
       "_id": "req_3ab74a707d6e4961a4702bbfcfc619a8",
       "parentId": "fld_1b8b6718e5164836ac5d4f8972ce6bd2",
-      "modified": 1686390751044,
+      "modified": 1686498691357,
       "created": 1685991894122,
       "url": "localhost:3333/graphql",
       "name": "Products Query",
@@ -15,7 +15,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"query {\\n\\tproducts(input: {\\n\\t\\tpageData: {\\n\\t\\t\\tpage: 1,\\n\\t\\t\\tpageSize: 10\\n\\t\\t}\\n\\t}) {\\n\\t\\tpageData {\\n\\t\\t\\ttotalPages,\\n\\t\\t\\tpage,\\n\\t\\t\\tpageSize\\n\\t\\t}\\n\\t\\titems {\\n\\t\\t\\tid,\\n\\t\\t\\tdescription,\\n\\t\\t\\tname,\\n\\t\\t\\tprice,\\n\\t\\t\\tattributes\\n\\t\\t}\\n\\t}\\n}\"}"
+        "text": "{\"query\":\"query {\\n\\tproducts(input: {\\n# \\t\\tids: [\\n# \\t\\t\\t\\\"products-692e2dfc-4f82-4857-b0c5-c0178f1b9138/16803\\\",\\n# \\t\\t\\t\\\"products-7352c26f-4905-434c-a708-47d621393e4c/17287\\\"\\n# \\t\\t]\\n# \\t\\tcategories: [\\n# \\t\\t\\t\\\"Тест1\\\"\\n# \\t\\t]\\n# \\t\\tpageData: {\\n# \\t\\t\\tpage: 1,\\n# \\t\\t\\tpageSize: 10\\n# \\t\\t}\\n\\t}) {\\n\\t\\tpageData {\\n\\t\\t\\ttotalPages,\\n\\t\\t\\tpage,\\n\\t\\t\\tpageSize\\n\\t\\t}\\n\\t\\titems {\\n\\t\\t\\tid,\\n\\t\\t\\tcategory,\\n\\t\\t\\tdescription,\\n\\t\\t\\tname,\\n\\t\\t\\tprice,\\n\\t\\t\\tattributes {\\n\\t\\t\\t\\tname\\n\\t\\t\\t\\tvalue\\n\\t\\t\\t}\\n\\t\\t}\\n\\t}\\n}\"}"
       },
       "parameters": [],
       "headers": [
@@ -63,7 +63,7 @@
     {
       "_id": "req_02e0db637a98458e8e3b2c3f813a26fc",
       "parentId": "fld_1b8b6718e5164836ac5d4f8972ce6bd2",
-      "modified": 1686390765992,
+      "modified": 1686498683664,
       "created": 1685994964497,
       "url": "localhost:3333/graphql",
       "name": "Product Query",
@@ -71,7 +71,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"query Product($id: String!) {\\n\\tproduct(id: $id) {\\n\\t\\t\\tid,\\n\\t\\t  description\\n\\t\\t\\tname,\\n\\t\\t\\tprice,\\n\\t\\t\\tattributes\\n\\t\\t}\\n}\",\"operationName\":\"Product\",\"variables\":{\"id\":\"{% response 'body', 'req_0b92ce8f24e44e6faa5a31389142fcad', 'b64::JC5kYXRhLmNyZWF0ZVByb2R1Y3QuaWQ=::46b', 'never', 60 %}\"}}"
+        "text": "{\"query\":\"query Product($id: String!) {\\n\\tproduct(id: $id) {\\n\\t\\tid\\n\\t\\tcategory\\n\\t\\tdescription\\n\\t\\tname\\n\\t\\tprice\\n\\t\\tattributes {\\n\\t\\t\\tname\\n\\t\\t\\tvalue\\n\\t\\t}\\n\\t}\\n}\\n\",\"operationName\":\"Product\",\"variables\":{\"id\":\"products-692e2dfc-4f82-4857-b0c5-c0178f1b9138/16803\"}}"
       },
       "parameters": [],
       "headers": [
@@ -97,7 +97,7 @@
     {
       "_id": "req_0b92ce8f24e44e6faa5a31389142fcad",
       "parentId": "fld_1b8b6718e5164836ac5d4f8972ce6bd2",
-      "modified": 1686390728706,
+      "modified": 1686499721786,
       "created": 1685808938237,
       "url": "localhost:3333/graphql",
       "name": "CreateProduct Mutation",
@@ -105,7 +105,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation {\\n\\tcreateProduct(category: \\\"Тест\\\", product: {\\n\\t\\tname: \\\"Тестовый продукт1\\\",\\n\\t\\tdescription: \\\"Описание\\\",\\n\\t\\tprice: 500,\\n\\t\\tattributes: {\\n\\t\\t\\tsize: \\\"10см\\\"\\n\\t\\t\\tcolor: \\\"красный\\\"\\n\\t\\t}\\n\\t}) {\\n\\t\\tid\\n\\t\\tdescription\\n\\t\\tname\\n\\t\\tprice\\n\\t\\tattributes\\n\\t}\\n}\"}"
+        "text": "{\"query\":\"mutation {\\n\\tcreateProduct(category: \\\"Тест1\\\", product: {\\n\\t\\tname: \\\"Тестовый продукт2\\\",\\n\\t\\tdescription: \\\"Описание\\\",\\n\\t\\tprice: 100,\\n\\t\\tattributes: [\\n\\t\\t\\t{\\n\\t\\t\\t\\tname: \\\"цвет\\\",\\n\\t\\t\\t\\tvalue: \\\"красный\\\"\\n\\t\\t\\t},\\n\\t\\t\\t{\\n\\t\\t\\t\\tname: \\\"вес\\\",\\n\\t\\t\\t\\tvalue: \\\"2кг\\\"\\n\\t\\t\\t}\\n\\t\\t]\\n\\t}) {\\n\\t\\tid\\n\\t\\tdescription\\n\\t\\tname\\n\\t\\tprice\\n\\t\\tattributes {\\n\\t\\t\\tname\\n\\t\\t\\tvalue\\n\\t\\t}\\n\\t}\\n}\"}"
       },
       "parameters": [],
       "headers": [
@@ -131,7 +131,7 @@
     {
       "_id": "req_380edfbdb8cd42c8a69cc080b9cb7563",
       "parentId": "fld_1b8b6718e5164836ac5d4f8972ce6bd2",
-      "modified": 1686390732843,
+      "modified": 1686510305647,
       "created": 1685813589601,
       "url": "localhost:3333/graphql",
       "name": "DeleteProduct Mutation",
@@ -139,7 +139,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation DeleteProduct($id: String!) {\\n\\tdeleteProduct(id: $id) {\\n\\t\\tid\\n\\t\\tdescription\\n\\t\\tname\\n\\t\\tprice\\n\\t}\\n}\",\"operationName\":\"DeleteProduct\",\"variables\":{\"id\":\"{% response 'body', 'req_0b92ce8f24e44e6faa5a31389142fcad', 'b64::JC5kYXRhLmNyZWF0ZVByb2R1Y3QuaWQ=::46b', 'never', 60 %}\"}}"
+        "text": "{\"query\":\"mutation DeleteProduct($id: String!) {\\n\\tdeleteProduct(id: $id) {\\n\\t\\tid\\n\\t\\tdescription\\n\\t\\tname\\n\\t\\tprice\\n\\t\\tattributes {\\n\\t\\t\\tname\\n\\t\\t\\tvalue\\n\\t\\t}\\n\\t}\\n}\",\"operationName\":\"DeleteProduct\",\"variables\":{\"id\":\"products-1f49cdce-4d30-405d-89a0-7558b48643e2/32541\"}}"
       },
       "parameters": [],
       "headers": [
@@ -165,7 +165,7 @@
     {
       "_id": "req_d35ebf6f21d148af840e463fdb2742a9",
       "parentId": "fld_1b8b6718e5164836ac5d4f8972ce6bd2",
-      "modified": 1686390735253,
+      "modified": 1686510263042,
       "created": 1685816089913,
       "url": "localhost:3333/graphql",
       "name": "UpdateProduct Mutation",
@@ -173,7 +173,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation UpdateProduct($id: String!) {\\n\\tupdateProduct(id: $id, product: {\\n\\t\\tname: \\\"Обновленный продукт\\\",\\n\\t\\tprice: 200,\\n\\t\\tattributes: {\\n\\t\\t\\tsize: \\\"12см\\\"\\n\\t\\t}\\n\\t}) {\\n\\t\\tid\\n\\t\\tdescription\\n\\t\\tname\\n\\t\\tprice\\n\\t\\tattributes\\n\\t}\\n}\",\"operationName\":\"UpdateProduct\",\"variables\":{\"id\":\"{% response 'body', 'req_0b92ce8f24e44e6faa5a31389142fcad', 'b64::JC5kYXRhLmNyZWF0ZVByb2R1Y3QuaWQ=::46b', 'never', 60 %}\"}}"
+        "text": "{\"query\":\"mutation UpdateProduct($id: String!) {\\n\\tupdateProduct(id: $id, product: {\\n\\t\\tname: \\\"Обновленный продукт2\\\",\\n\\t\\tprice: 200,\\n\\t\\tattributes: [\\n\\t\\t\\t{\\n\\t\\t\\t\\tname: \\\"цвет\\\",\\n\\t\\t\\t\\tvalue: \\\"зеленый\\\"\\n\\t\\t\\t},\\n\\t\\t\\t{\\n\\t\\t\\t\\tname: \\\"вес\\\",\\n\\t\\t\\t\\tvalue: \\\"2кг\\\"\\n\\t\\t\\t}\\n\\t\\t]\\n\\t}) {\\n\\t\\tid\\n\\t\\tdescription\\n\\t\\tname\\n\\t\\tprice\\n\\t\\tattributes {\\n\\t\\t\\tname\\n\\t\\t\\tvalue\\n\\t\\t}\\n\\t}\\n}\",\"operationName\":\"UpdateProduct\",\"variables\":{\"id\":\"products-1f49cdce-4d30-405d-89a0-7558b48643e2/32541\"}}"
       },
       "parameters": [],
       "headers": [
@@ -199,7 +199,7 @@
     {
       "_id": "req_99efc3d5b58f4b6c93f232d49f357b02",
       "parentId": "fld_36714cb195444783ac386c59b285b229",
-      "modified": 1686078209067,
+      "modified": 1686498635062,
       "created": 1686078187943,
       "url": "localhost:3333/graphql",
       "name": "Categories Query",
@@ -207,7 +207,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"query {\\n\\tcategories {\\n\\t\\tname\\n\\t\\tattributes\\n\\t}\\n}\"}"
+        "text": "{\"query\":\"query {\\n\\tcategories {\\n\\t\\tname\\n\\t\\tattributes {\\n\\t\\t\\tname\\n\\t\\t\\tvalue\\n\\t\\t\\tcount\\n\\t\\t}\\n\\t}\\n}\\n\"}"
       },
       "parameters": [],
       "headers": [
@@ -245,7 +245,7 @@
     {
       "_id": "req_20717d41089d4df484e84eae09fd187c",
       "parentId": "fld_36714cb195444783ac386c59b285b229",
-      "modified": 1686391557302,
+      "modified": 1686499047897,
       "created": 1685644944969,
       "url": "localhost:3333/graphql",
       "name": "CreateCategory Mutation",
@@ -253,7 +253,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation {\\n\\tcreateCategory(name: \\\"Тест\\\") {\\n\\t\\tname\\n\\t\\tattributes\\n\\t}\\n}\"}"
+        "text": "{\"query\":\"mutation {\\n\\tcreateCategory(name: \\\"Тест1\\\") {\\n\\t\\tname\\n\\t\\tattributes {\\n\\t\\t\\tname\\n\\t\\t\\tvalue\\n\\t\\t\\tcount\\n\\t\\t}\\n\\t}\\n}\"}"
       },
       "parameters": [],
       "headers": [
@@ -279,7 +279,7 @@
     {
       "_id": "req_57ba6d92b8d640dabe1f5a099eafe6c4",
       "parentId": "fld_36714cb195444783ac386c59b285b229",
-      "modified": 1686391569616,
+      "modified": 1686499766447,
       "created": 1685802311581,
       "url": "localhost:3333/graphql",
       "name": "DeleteCategory Mutation",
@@ -287,7 +287,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation {\\n\\tdeleteCategory(name: \\\"Тест\\\") {\\n\\t\\tname\\n\\t\\tattributes\\n\\t}\\n}\"}"
+        "text": "{\"query\":\"mutation {\\n\\tdeleteCategory(name: \\\"Тест1\\\") {\\n\\t\\tname\\n\\t\\tattributes {\\n\\t\\t\\tname\\n\\t\\t\\tvalue\\n\\t\\t\\tcount\\n\\t\\t}\\n\\t}\\n}\"}"
       },
       "parameters": [],
       "headers": [
@@ -313,7 +313,7 @@
     {
       "_id": "req_cad725b147e54fa2804181fde3bc81a8",
       "parentId": "fld_36714cb195444783ac386c59b285b229",
-      "modified": 1686393647221,
+      "modified": 1686510222711,
       "created": 1685816778987,
       "url": "localhost:3333/graphql",
       "name": "UpdateCategory Mutation",
@@ -321,7 +321,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation {\\n\\tupdateCategory(originalName: \\\"Тест\\\", newName: \\\"Тест2\\\") {\\n\\t\\tname\\n\\t\\tattributes\\n\\t}\\n}\"}"
+        "text": "{\"query\":\"mutation {\\n\\tupdateCategory(originalName: \\\"Тест2\\\", newName: \\\"Тест1\\\") {\\n\\t\\tname\\n\\t\\tattributes {\\n\\t\\t\\tname\\n\\t\\t\\tvalue\\n\\t\\t\\tcount\\n\\t\\t}\\n\\t}\\n}\"}"
       },
       "parameters": [],
       "headers": [

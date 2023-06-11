@@ -5,6 +5,7 @@ import { makeApplicationError } from "../../../infrastructure/formatErrorHandler
 import { getCategory } from "../../Categories/categories.services.js";
 import { DbCategory, DbProduct } from "../../../infrastructure/dbTypes.js";
 import { aql } from "arangojs";
+import { transaction } from "../../../infrastructure/arangoUtils.js";
 
 
 export const createProductMutation: GqlMutationResolvers<HollofabrikaContext>["createProduct"] =
@@ -19,22 +20,16 @@ export const createProductMutation: GqlMutationResolvers<HollofabrikaContext>["c
         if (!isCategoryExists)
             throw makeApplicationError("CreateProduct_CategoryNotExists", GqlErrorCode.BadRequest);
 
-        const productToInsert: DbProduct = {
-            name: args.product.name,
-            description: args.product.description,
-            price: args.product.price,
-            attributes: args.product.attributes
-        };
+        const productToInsert = args.product satisfies DbProduct;
 
         addAttributes(category, productToInsert);
 
         const productsCollection = context.db.collection<DbProduct>(category.collectionName);
-        const trx = await context.db.beginTransaction({
+
+        return await transaction(context.db, {
             write: [productsCollection],
             exclusive: [categoriesCollection]
-        });
-
-        try {
+        }, async trx => {
             const newProduct = await trx.step(() =>
                 productsCollection.save(productToInsert, { returnNew: true })
             );
@@ -44,42 +39,29 @@ export const createProductMutation: GqlMutationResolvers<HollofabrikaContext>["c
                 options { ignoreRevs: false }
             `));
 
-            await trx.commit();
             return {
                 id: newProduct.new!._id,
+                category: category.name,
                 description: newProduct.new!.description,
                 name: newProduct.new!.name,
                 price: newProduct.new!.price,
                 attributes: newProduct.new!.attributes
             };
-        } catch (e) {
-            await trx.abort();
-            throw e;
-        }
+        });
     };
 
 export function addAttributes(category: DbCategory, product: DbProduct) {
-    category.attributes ??= {};
+    for (let attribute of product.attributes) {
+        const categoryAttribute = category.attributes
+            .find(x => x.name === attribute.name);
 
-    for (let [key, value] of Object.entries(product.attributes ?? {})) {
-        const existed = category.attributes?.[key];
-
-        if (!existed) {
-            category.attributes[key] = [{
-                value: value,
-                count: 1
-            }];
+        if (categoryAttribute) {
+            categoryAttribute.count++;
             continue;
         }
 
-        const sameValue = existed.filter(x => x.value === value)[0];
-        if (sameValue) {
-            sameValue.count++;
-            continue;
-        }
-
-        existed.push({
-            value: value,
+        category.attributes.push({
+            ...attribute,
             count: 1
         });
     }
