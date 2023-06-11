@@ -30,6 +30,7 @@ input CreateProductArgs {
 
 type Product {
     id: String!
+    category: String!
     description: String!
     name: String!
     price: Int!

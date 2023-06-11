@@ -1,6 +1,6 @@
 import { GqlProduct, GqlQueryResolvers } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
-import { getAllProductsView } from "../../Categories/categories.setup.js";
+import { getAllProductsView, getCategoriesCollection } from "../../Categories/categories.setup.js";
 import { queryAll } from "../../../infrastructure/arangoUtils.js";
 import { aql } from "arangojs";
 import { defaultPageSize } from "../../../infrastructure/constants.js";
@@ -17,24 +17,32 @@ export const productsQuery: GqlQueryResolvers<HollofabrikaContext>["products"] =
         };
 
         const filterbByIds = args.input.ids?.length! > 0
-            ? aql`filter doc._id in ${args.input.ids}`
+            ? aql`filter product._id in ${args.input.ids}`
             : aql``;
 
-        const filterbByCategory = args.input.categories?.length! > 0
-            ? aql`filter parse_identifier(doc._id).collection in ${args.input.categories}`
-            : aql``;
+        const categoriesCollection = getCategoriesCollection(context.db);
+        const joinCategory = args.input.categories?.length! > 0
+            ? aql`
+                for category in ${categoriesCollection} 
+                filter category.name in ${args.input.categories}
+            `
+            : aql`
+                for category in ${categoriesCollection} 
+            `;
 
         const { items, depletedCursor } = await queryAll<GqlProduct>(context.db, aql`
-            for doc in ${allProductsView}
+            ${joinCategory}
+            for product in ${allProductsView}
+            filter parse_identifier(product._id).collection == category.collectionName
             ${filterbByIds}
-            ${filterbByCategory}
             limit ${args.input.pageData.pageSize * (args.input.pageData.page - 1)}, ${args.input.pageData.pageSize}
             return {
-                id: doc._id,
-                name: doc.name,
-                description: doc.description,
-                price: doc.price,
-                attributes: doc.attributes
+                id: product._id,
+                category: category.name,
+                name: product.name,
+                description: product.description,
+                price: product.price,
+                attributes: product.attributes
             }
         `, { fullCount: true });
 
