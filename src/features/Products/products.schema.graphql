@@ -12,7 +12,7 @@ type Mutation {
 input ProductsQueryInput {
     ids: [String]
     categories: [String]
-    filters: [ProductInputAttribute!]
+    filter: ProductFilterQueryInput
     pageData: PageDataInput
 }
 
@@ -47,6 +47,16 @@ type Product {
 type ProductAttribute {
     name: String!
     value: String!
+}
+
+input ProductFilterQueryInput {
+    logic: FilterLogic!
+    attributes: [ProductInputAttribute!]
+}
+
+enum FilterLogic {
+    OR
+    AND
 }
 
 input ProductInputAttribute {

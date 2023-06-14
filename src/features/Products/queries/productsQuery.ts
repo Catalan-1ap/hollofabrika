@@ -1,4 +1,4 @@
-import { GqlProduct, GqlQueryResolvers } from "../../../infrastructure/gqlTypes.js";
+import { GqlFilterLogic, GqlProduct, GqlQueryResolvers } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { getAllProductsView, getCategoriesCollection } from "../../Categories/categories.setup.js";
 import { queryAll } from "../../../infrastructure/arangoUtils.js";
@@ -16,7 +16,7 @@ export const productsQuery: GqlQueryResolvers<HollofabrikaContext>["products"] =
             pageSize: defaultPageSize
         };
 
-        const filterbByIds = args.input.ids?.length! > 0
+        const filterByIds = args.input.ids?.length! > 0
             ? aql`filter product._id in ${args.input.ids}`
             : aql``;
 
@@ -24,17 +24,24 @@ export const productsQuery: GqlQueryResolvers<HollofabrikaContext>["products"] =
         const joinCategory = args.input.categories?.length! > 0
             ? aql`
                 for category in ${categoriesCollection} 
-                filter category.name in ${args.input.categories}
-            `
+                filter category.name in ${args.input.categories}`
             : aql`
-                for category in ${categoriesCollection} 
-            `;
+                for category in ${categoriesCollection}`;
+
+        const filterWithFilters = args.input.filter
+            ? aql`filter product.attributes ${
+                args.input.filter.logic === GqlFilterLogic.Or
+                    ? aql`any`
+                    : aql`all`
+            } in ${args.input.filter.attributes}`
+            : aql``;
 
         const { items, depletedCursor } = await queryAll<GqlProduct>(context.db, aql`
             ${joinCategory}
             for product in ${allProductsView}
             filter parse_identifier(product._id).collection == category.collectionName
-            ${filterbByIds}
+            ${filterByIds}
+            ${filterWithFilters}
             limit ${args.input.pageData.pageSize * (args.input.pageData.page - 1)}, ${args.input.pageData.pageSize}
             return {
                 id: product._id,

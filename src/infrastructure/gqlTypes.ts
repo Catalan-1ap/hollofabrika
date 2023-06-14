@@ -63,16 +63,16 @@ export type Scalars = {
   PhoneNumber: any;
   Port: any;
   PositiveFloat: any;
-  PositiveInt: any;
-  PostalCode: any;
-  RGB: any;
-  RGBA: any;
-  RoutingNumber: any;
-  SafeInt: any;
-  SemVer: any;
-  Time: any;
-  TimeZone: any;
-  Timestamp: any;
+    PositiveInt: any;
+    PostalCode: any;
+    RGB: any;
+    RGBA: any;
+    RoutingNumber: any;
+    SafeInt: any;
+    SemVer: any;
+    Time: any;
+    TimeZone: any;
+    Timestamp: any;
     URL: any;
     USCurrency: any;
     UUID: any;
@@ -106,19 +106,24 @@ export type GqlError = {
 };
 
 export enum GqlErrorCode {
-  BadRequest = 'BadRequest',
-  InternalError = 'InternalError'
+    BadRequest = "BadRequest",
+    InternalError = "InternalError"
+}
+
+export enum GqlFilterLogic {
+    And = "AND",
+    Or = "OR"
 }
 
 export type GqlJwtToken = {
-  access: Scalars['String'];
-  refresh: Scalars['String'];
+    access: Scalars["String"];
+    refresh: Scalars["String"];
 };
 
 export type GqlMutation = {
-  createCategory: GqlCategory;
-  createProduct: GqlProduct;
-  deleteCategory: GqlCategory;
+    createCategory: GqlCategory;
+    createProduct: GqlProduct;
+    deleteCategory: GqlCategory;
   deleteProduct: GqlProduct;
   login?: Maybe<GqlJwtToken>;
   refresh?: Maybe<GqlJwtToken>;
@@ -210,6 +215,11 @@ export type GqlProductAttribute = {
     value: Scalars["String"];
 };
 
+export type GqlProductFilterQueryInput = {
+    attributes?: InputMaybe<Array<GqlProductInputAttribute>>;
+    logic: GqlFilterLogic;
+};
+
 export type GqlProductInputAttribute = {
     name: Scalars["String"];
     value: Scalars["String"];
@@ -217,7 +227,7 @@ export type GqlProductInputAttribute = {
 
 export type GqlProductsQueryInput = {
     categories?: InputMaybe<Array<InputMaybe<Scalars["String"]>>>;
-    filters?: InputMaybe<Array<GqlProductInputAttribute>>;
+    filter?: InputMaybe<GqlProductFilterQueryInput>;
     ids?: InputMaybe<Array<InputMaybe<Scalars["String"]>>>;
     pageData?: InputMaybe<GqlPageDataInput>;
 };
@@ -278,6 +288,7 @@ export type GqlUser = {
     role: GqlRole;
     username: Scalars["String"];
 };
+
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -368,6 +379,7 @@ export type GqlResolversTypes = {
     EmailAddress: ResolverTypeWrapper<Scalars["EmailAddress"]>;
     Error: ResolverTypeWrapper<GqlError>;
     ErrorCode: GqlErrorCode;
+    FilterLogic: GqlFilterLogic;
     GUID: ResolverTypeWrapper<Scalars["GUID"]>;
     HSL: ResolverTypeWrapper<Scalars["HSL"]>;
     HSLA: ResolverTypeWrapper<Scalars["HSLA"]>;
@@ -413,6 +425,7 @@ export type GqlResolversTypes = {
     PostalCode: ResolverTypeWrapper<Scalars["PostalCode"]>;
     Product: ResolverTypeWrapper<GqlProduct>;
     ProductAttribute: ResolverTypeWrapper<GqlProductAttribute>;
+    ProductFilterQueryInput: GqlProductFilterQueryInput;
     ProductInputAttribute: GqlProductInputAttribute;
     ProductsQueryInput: GqlProductsQueryInput;
     ProductsQueryResult: ResolverTypeWrapper<GqlProductsQueryResult>;
@@ -507,6 +520,7 @@ export type GqlResolversParentTypes = {
     PostalCode: Scalars["PostalCode"];
     Product: GqlProduct;
     ProductAttribute: GqlProductAttribute;
+    ProductFilterQueryInput: GqlProductFilterQueryInput;
     ProductInputAttribute: GqlProductInputAttribute;
     ProductsQueryInput: GqlProductsQueryInput;
     ProductsQueryResult: GqlProductsQueryResult;
@@ -910,16 +924,16 @@ export type GqlResolvers<ContextType = any> = {
     DeweyDecimal?: GraphQLScalarType;
     Duration?: GraphQLScalarType;
     EmailAddress?: GraphQLScalarType;
-  Error?: GqlErrorResolvers<ContextType>;
-  GUID?: GraphQLScalarType;
-  HSL?: GraphQLScalarType;
-  HSLA?: GraphQLScalarType;
-  HexColorCode?: GraphQLScalarType;
-  Hexadecimal?: GraphQLScalarType;
-  IBAN?: GraphQLScalarType;
-  IP?: GraphQLScalarType;
-  IPCPatent?: GraphQLScalarType;
-  IPv4?: GraphQLScalarType;
+    Error?: GqlErrorResolvers<ContextType>;
+    GUID?: GraphQLScalarType;
+    HSL?: GraphQLScalarType;
+    HSLA?: GraphQLScalarType;
+    HexColorCode?: GraphQLScalarType;
+    Hexadecimal?: GraphQLScalarType;
+    IBAN?: GraphQLScalarType;
+    IP?: GraphQLScalarType;
+    IPCPatent?: GraphQLScalarType;
+    IPv4?: GraphQLScalarType;
   IPv6?: GraphQLScalarType;
   ISBN?: GraphQLScalarType;
   ISO8601Duration?: GraphQLScalarType;
@@ -933,16 +947,16 @@ export type GqlResolvers<ContextType = any> = {
   LocalDateTime?: GraphQLScalarType;
   LocalEndTime?: GraphQLScalarType;
   LocalTime?: GraphQLScalarType;
-  Locale?: GraphQLScalarType;
-  Long?: GraphQLScalarType;
-  Longitude?: GraphQLScalarType;
-  MAC?: GraphQLScalarType;
-  Mutation?: GqlMutationResolvers<ContextType>;
-  NegativeFloat?: GraphQLScalarType;
-  NegativeInt?: GraphQLScalarType;
-  NonEmptyString?: GraphQLScalarType;
-  NonNegativeFloat?: GraphQLScalarType;
-  NonNegativeInt?: GraphQLScalarType;
+    Locale?: GraphQLScalarType;
+    Long?: GraphQLScalarType;
+    Longitude?: GraphQLScalarType;
+    MAC?: GraphQLScalarType;
+    Mutation?: GqlMutationResolvers<ContextType>;
+    NegativeFloat?: GraphQLScalarType;
+    NegativeInt?: GraphQLScalarType;
+    NonEmptyString?: GraphQLScalarType;
+    NonNegativeFloat?: GraphQLScalarType;
+    NonNegativeInt?: GraphQLScalarType;
     NonPositiveFloat?: GraphQLScalarType;
     NonPositiveInt?: GraphQLScalarType;
     ObjectID?: GraphQLScalarType;
@@ -964,16 +978,16 @@ export type GqlResolvers<ContextType = any> = {
     SemVer?: GraphQLScalarType;
     SomethingWentWrong?: GqlSomethingWentWrongResolvers<ContextType>;
     Success?: GqlSuccessResolvers<ContextType>;
-  Time?: GraphQLScalarType;
-  TimeZone?: GraphQLScalarType;
-  Timestamp?: GraphQLScalarType;
-  URL?: GraphQLScalarType;
-  USCurrency?: GraphQLScalarType;
-  UUID?: GraphQLScalarType;
-  UnsignedFloat?: GraphQLScalarType;
-  UnsignedInt?: GraphQLScalarType;
-  User?: GqlUserResolvers<ContextType>;
-  UtcOffset?: GraphQLScalarType;
+    Time?: GraphQLScalarType;
+    TimeZone?: GraphQLScalarType;
+    Timestamp?: GraphQLScalarType;
+    URL?: GraphQLScalarType;
+    USCurrency?: GraphQLScalarType;
+    UUID?: GraphQLScalarType;
+    UnsignedFloat?: GraphQLScalarType;
+    UnsignedInt?: GraphQLScalarType;
+    User?: GqlUserResolvers<ContextType>;
+    UtcOffset?: GraphQLScalarType;
   Void?: GraphQLScalarType;
 };
 
