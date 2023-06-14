@@ -1,16 +1,16 @@
 type Query {
     products(input: ProductsQueryInput): ProductsQueryResult!
-    product(id: String!): Product!
+    product(id: Id!): Product!
 }
 
 type Mutation {
     createProduct(category: String!, product: CreateProductArgs!): Product!
-    deleteProduct(id: String!): Product!
-    updateProduct(id: String!, product: UpdateProductArgs!): Product!
+    deleteProduct(id: Id!): Product!
+    updateProduct(id: Id!, product: UpdateProductArgs!): Product!
 }
 
 input ProductsQueryInput {
-    ids: [String]
+    ids: [Id!]
     categories: [String]
     filter: ProductFilterQueryInput
     pageData: PageDataInput
@@ -36,7 +36,7 @@ input UpdateProductArgs {
 }
 
 type Product {
-    id: String!
+    id: Id!
     category: String!
     description: String!
     name: String!

@@ -1,13 +1,13 @@
 {
   "_type": "export",
   "__export_format": 4,
-  "__export_date": "2023-06-14T16:18:15.799Z",
+  "__export_date": "2023-06-14T17:54:37.283Z",
   "__export_source": "insomnia.desktop.app:v2022.7.5",
   "resources": [
     {
       "_id": "req_3ab74a707d6e4961a4702bbfcfc619a8",
       "parentId": "fld_1b8b6718e5164836ac5d4f8972ce6bd2",
-      "modified": 1686758723278,
+      "modified": 1686764968801,
       "created": 1685991894122,
       "url": "localhost:3333/graphql",
       "name": "Products Query",
@@ -15,7 +15,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"query {\\n\\tproducts(input: {\\n# \\t\\tids: [\\n# \\t\\t\\t\\\"products-1f49cdce-4d30-405d-89a0-7558b48643e2/33955\\\",\\n# \\t\\t]\\n# \\t\\tcategories: [\\n# \\t\\t\\t\\\"Тест2\\\"\\n# \\t\\t]\\n\\t\\tpageData: {\\n\\t\\t\\tpage: 1,\\n\\t\\t\\tpageSize: 1\\n\\t\\t}\\n# \\t\\tfilter: {\\n# \\t\\t\\tlogic: AND\\n# \\t\\t\\tattributes: [\\n# \\t\\t\\t\\t{\\n# \\t\\t\\t\\t\\tname: \\\"цвет\\\",\\n# \\t\\t\\t\\t\\tvalue: \\\"красный\\\"\\n# \\t\\t\\t\\t},\\n# \\t\\t\\t\\t{\\n# \\t\\t\\t\\t\\tname: \\\"обьем\\\",\\n# \\t\\t\\t\\t\\tvalue: \\\"2л\\\"\\n# \\t\\t\\t\\t}\\n# \\t\\t\\t]\\n# \\t\\t} \\n\\t}) {\\n\\t\\tpageData {\\n\\t\\t\\ttotalPages,\\n\\t\\t\\tpage,\\n\\t\\t\\tpageSize\\n\\t\\t}\\n\\t\\titems {\\n\\t\\t\\tid,\\n\\t\\t\\tcategory,\\n\\t\\t\\tdescription,\\n\\t\\t\\tname,\\n\\t\\t\\tprice,\\n\\t\\t\\tattributes {\\n\\t\\t\\t\\tname\\n\\t\\t\\t\\tvalue\\n\\t\\t\\t}\\n\\t\\t}\\n\\t}\\n}\"}"
+        "text": "{\"query\":\"query {\\n\\tproducts(input: {\\n# \\t\\tids: [\\n# \\t\\t\\\"cHJvZHVjdHMtMWY0OWNkY2UtNGQzMC00MDVkLTg5YTAtNzU1OGI0ODY0M2UyLzMzOTU1\\\",\\n# \\t\\t]\\n# \\t\\tcategories: [\\n# \\t\\t\\t\\\"Тест2\\\"\\n# \\t\\t]\\n# \\t\\tpageData: {\\n# \\t\\t\\tpage: 1,\\n# \\t\\t\\tpageSize: 1\\n# \\t\\t}\\n# \\t\\tfilter: {\\n# \\t\\t\\tlogic: AND\\n# \\t\\t\\tattributes: [\\n# \\t\\t\\t\\t{\\n# \\t\\t\\t\\t\\tname: \\\"цвет\\\",\\n# \\t\\t\\t\\t\\tvalue: \\\"красный\\\"\\n# \\t\\t\\t\\t},\\n# \\t\\t\\t\\t{\\n# \\t\\t\\t\\t\\tname: \\\"обьем\\\",\\n# \\t\\t\\t\\t\\tvalue: \\\"2л\\\"\\n# \\t\\t\\t\\t}\\n# \\t\\t\\t]\\n# \\t\\t} \\n\\t}) {\\n\\t\\tpageData {\\n\\t\\t\\ttotalPages,\\n\\t\\t\\tpage,\\n\\t\\t\\tpageSize\\n\\t\\t}\\n\\t\\titems {\\n\\t\\t\\tid,\\n\\t\\t\\tcategory,\\n\\t\\t\\tdescription,\\n\\t\\t\\tname,\\n\\t\\t\\tprice,\\n\\t\\t\\tattributes {\\n\\t\\t\\t\\tname\\n\\t\\t\\t\\tvalue\\n\\t\\t\\t}\\n\\t\\t}\\n\\t}\\n}\"}"
       },
       "parameters": [],
       "headers": [
@@ -131,7 +131,7 @@
     {
       "_id": "req_380edfbdb8cd42c8a69cc080b9cb7563",
       "parentId": "fld_1b8b6718e5164836ac5d4f8972ce6bd2",
-      "modified": 1686510305647,
+      "modified": 1686764502033,
       "created": 1685813589601,
       "url": "localhost:3333/graphql",
       "name": "DeleteProduct Mutation",
@@ -139,7 +139,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation DeleteProduct($id: String!) {\\n\\tdeleteProduct(id: $id) {\\n\\t\\tid\\n\\t\\tdescription\\n\\t\\tname\\n\\t\\tprice\\n\\t\\tattributes {\\n\\t\\t\\tname\\n\\t\\t\\tvalue\\n\\t\\t}\\n\\t}\\n}\",\"operationName\":\"DeleteProduct\",\"variables\":{\"id\":\"products-1f49cdce-4d30-405d-89a0-7558b48643e2/32541\"}}"
+        "text": "{\"query\":\"mutation DeleteProduct($id: Id!) {\\n\\tdeleteProduct(id: $id) {\\n\\t\\tid\\n\\t\\tdescription\\n\\t\\tname\\n\\t\\tprice\\n\\t\\tattributes {\\n\\t\\t\\tname\\n\\t\\t\\tvalue\\n\\t\\t}\\n\\t}\\n}\",\"operationName\":\"DeleteProduct\",\"variables\":{\"id\":\"cHJvZHVjdHMtZWQwYzljZTYtNzAyZi00MTUyLTlkOGYtNWQ4OGY0NzMzZTNjLzM2HjMw\"}}"
       },
       "parameters": [],
       "headers": [
@@ -165,7 +165,7 @@
     {
       "_id": "req_d35ebf6f21d148af840e463fdb2742a9",
       "parentId": "fld_1b8b6718e5164836ac5d4f8972ce6bd2",
-      "modified": 1686510263042,
+      "modified": 1686763800972,
       "created": 1685816089913,
       "url": "localhost:3333/graphql",
       "name": "UpdateProduct Mutation",
@@ -173,7 +173,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/graphql",
-        "text": "{\"query\":\"mutation UpdateProduct($id: String!) {\\n\\tupdateProduct(id: $id, product: {\\n\\t\\tname: \\\"Обновленный продукт2\\\",\\n\\t\\tprice: 200,\\n\\t\\tattributes: [\\n\\t\\t\\t{\\n\\t\\t\\t\\tname: \\\"цвет\\\",\\n\\t\\t\\t\\tvalue: \\\"зеленый\\\"\\n\\t\\t\\t},\\n\\t\\t\\t{\\n\\t\\t\\t\\tname: \\\"вес\\\",\\n\\t\\t\\t\\tvalue: \\\"2кг\\\"\\n\\t\\t\\t}\\n\\t\\t]\\n\\t}) {\\n\\t\\tid\\n\\t\\tdescription\\n\\t\\tname\\n\\t\\tprice\\n\\t\\tattributes {\\n\\t\\t\\tname\\n\\t\\t\\tvalue\\n\\t\\t}\\n\\t}\\n}\",\"operationName\":\"UpdateProduct\",\"variables\":{\"id\":\"products-1f49cdce-4d30-405d-89a0-7558b48643e2/32541\"}}"
+        "text": "{\"query\":\"mutation UpdateProduct($id: Id!) {\\n\\tupdateProduct(id: $id, product: {\\n\\t\\tname: \\\"Обновленный продукт2\\\",\\n\\t\\tprice: 200,\\n\\t\\tattributes: [\\n\\t\\t\\t{\\n\\t\\t\\t\\tname: \\\"цвет\\\",\\n\\t\\t\\t\\tvalue: \\\"зеленый\\\"\\n\\t\\t\\t},\\n\\t\\t\\t{\\n\\t\\t\\t\\tname: \\\"вес\\\",\\n\\t\\t\\t\\tvalue: \\\"2кг\\\"\\n\\t\\t\\t}\\n\\t\\t]\\n\\t}) {\\n\\t\\tid\\n\\t\\tdescription\\n\\t\\tname\\n\\t\\tprice\\n\\t\\tattributes {\\n\\t\\t\\tname\\n\\t\\t\\tvalue\\n\\t\\t}\\n\\t}\\n}\",\"operationName\":\"UpdateProduct\",\"variables\":{\"id\":\"cHJvZHVjdHMtZWQwYzljZTYtNzAyZi00MTUyLTlkOGYtNWQ4OGY0NzMzZTNjLzM2HjMw\"}}"
       },
       "parameters": [],
       "headers": [

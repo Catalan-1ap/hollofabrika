@@ -29,40 +29,41 @@ export type Scalars = {
   EmailAddress: any;
   GUID: any;
   HSL: any;
-  HSLA: any;
-  HexColorCode: any;
-  Hexadecimal: any;
-  IBAN: any;
-  IP: any;
-  IPCPatent: any;
-  IPv4: any;
-  IPv6: any;
-  ISBN: any;
-  ISO8601Duration: any;
-  JSON: any;
-  JSONObject: Record<string, any>;
-  JWT: any;
-  LCCSubclass: any;
-  Latitude: any;
-  LocalDate: any;
-  LocalDateTime: any;
-  LocalEndTime: any;
-  LocalTime: any;
-  Locale: any;
+    HSLA: any;
+    HexColorCode: any;
+    Hexadecimal: any;
+    IBAN: any;
+    IP: any;
+    IPCPatent: any;
+    IPv4: any;
+    IPv6: any;
+    ISBN: any;
+    ISO8601Duration: any;
+    Id: string;
+    JSON: any;
+    JSONObject: Record<string, any>;
+    JWT: any;
+    LCCSubclass: any;
+    Latitude: any;
+    LocalDate: any;
+    LocalDateTime: any;
+    LocalEndTime: any;
+    LocalTime: any;
+    Locale: any;
   Long: any;
   Longitude: any;
   MAC: any;
   NegativeFloat: any;
-  NegativeInt: any;
-  NonEmptyString: any;
-  NonNegativeFloat: any;
-  NonNegativeInt: any;
-  NonPositiveFloat: any;
-  NonPositiveInt: any;
-  ObjectID: any;
-  PhoneNumber: any;
-  Port: any;
-  PositiveFloat: any;
+    NegativeInt: any;
+    NonEmptyString: any;
+    NonNegativeFloat: any;
+    NonNegativeInt: any;
+    NonPositiveFloat: any;
+    NonPositiveInt: any;
+    ObjectID: any;
+    PhoneNumber: any;
+    Port: any;
+    PositiveFloat: any;
     PositiveInt: any;
     PostalCode: any;
     RGB: any;
@@ -124,13 +125,13 @@ export type GqlMutation = {
     createCategory: GqlCategory;
     createProduct: GqlProduct;
     deleteCategory: GqlCategory;
-  deleteProduct: GqlProduct;
-  login?: Maybe<GqlJwtToken>;
-  refresh?: Maybe<GqlJwtToken>;
-  register?: Maybe<GqlRegisterResponse>;
-  updateCategory: GqlCategory;
-  updateProduct: GqlProduct;
-  verifyEmail?: Maybe<GqlSuccess>;
+    deleteProduct: GqlProduct;
+    login?: Maybe<GqlJwtToken>;
+    refresh?: Maybe<GqlJwtToken>;
+    register?: Maybe<GqlRegisterResponse>;
+    updateCategory: GqlCategory;
+    updateProduct: GqlProduct;
+    verifyEmail?: Maybe<GqlSuccess>;
 };
 
 
@@ -151,7 +152,7 @@ export type GqlMutationDeleteCategoryArgs = {
 
 
 export type GqlMutationDeleteProductArgs = {
-  id: Scalars['String'];
+    id: Scalars["Id"];
 };
 
 
@@ -180,7 +181,7 @@ export type GqlMutationUpdateCategoryArgs = {
 
 
 export type GqlMutationUpdateProductArgs = {
-    id: Scalars["String"];
+    id: Scalars["Id"];
     product: GqlUpdateProductArgs;
 };
 
@@ -205,7 +206,7 @@ export type GqlProduct = {
     attributes: Array<GqlProductAttribute>;
     category: Scalars["String"];
     description: Scalars["String"];
-    id: Scalars["String"];
+    id: Scalars["Id"];
     name: Scalars["String"];
     price: Scalars["Int"];
 };
@@ -228,7 +229,7 @@ export type GqlProductInputAttribute = {
 export type GqlProductsQueryInput = {
     categories?: InputMaybe<Array<InputMaybe<Scalars["String"]>>>;
     filter?: InputMaybe<GqlProductFilterQueryInput>;
-    ids?: InputMaybe<Array<InputMaybe<Scalars["String"]>>>;
+    ids?: InputMaybe<Array<InputMaybe<Scalars["Id"]>>>;
     pageData?: InputMaybe<GqlPageDataInput>;
 };
 
@@ -246,7 +247,7 @@ export type GqlQuery = {
 
 
 export type GqlQueryProductArgs = {
-    id: Scalars["String"];
+    id: Scalars["Id"];
 };
 
 
@@ -392,6 +393,7 @@ export type GqlResolversTypes = {
     IPv6: ResolverTypeWrapper<Scalars["IPv6"]>;
     ISBN: ResolverTypeWrapper<Scalars["ISBN"]>;
     ISO8601Duration: ResolverTypeWrapper<Scalars["ISO8601Duration"]>;
+    Id: ResolverTypeWrapper<Scalars["Id"]>;
     Int: ResolverTypeWrapper<Scalars["Int"]>;
     JSON: ResolverTypeWrapper<Scalars["JSON"]>;
     JSONObject: ResolverTypeWrapper<Scalars["JSONObject"]>;
@@ -487,6 +489,7 @@ export type GqlResolversParentTypes = {
     IPv6: Scalars["IPv6"];
     ISBN: Scalars["ISBN"];
     ISO8601Duration: Scalars["ISO8601Duration"];
+    Id: Scalars["Id"];
     Int: Scalars["Int"];
     JSON: Scalars["JSON"];
     JSONObject: Scalars["JSONObject"];
@@ -659,23 +662,27 @@ export interface GqlIPv6ScalarConfig extends GraphQLScalarTypeConfig<GqlResolver
   name: 'IPv6';
 }
 
-export interface GqlIsbnScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['ISBN'], any> {
-  name: 'ISBN';
+export interface GqlIsbnScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["ISBN"], any> {
+    name: "ISBN";
 }
 
-export interface GqlIso8601DurationScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['ISO8601Duration'], any> {
-  name: 'ISO8601Duration';
+export interface GqlIso8601DurationScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["ISO8601Duration"], any> {
+    name: "ISO8601Duration";
 }
 
-export interface GqlJsonScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['JSON'], any> {
-  name: 'JSON';
+export interface GqlIdScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["Id"], any> {
+    name: "Id";
 }
 
-export interface GqlJsonObjectScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['JSONObject'], any> {
-  name: 'JSONObject';
+export interface GqlJsonScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["JSON"], any> {
+    name: "JSON";
 }
 
-export interface GqlJwtScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['JWT'], any> {
+export interface GqlJsonObjectScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["JSONObject"], any> {
+    name: "JSONObject";
+}
+
+export interface GqlJwtScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["JWT"], any> {
   name: 'JWT';
 }
 
@@ -801,7 +808,7 @@ export type GqlProductResolvers<ContextType = any, ParentType extends GqlResolve
     attributes?: Resolver<Array<GqlResolversTypes["ProductAttribute"]>, ParentType, ContextType>;
     category?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
     description?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
-    id?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
+    id?: Resolver<GqlResolversTypes["Id"], ParentType, ContextType>;
     name?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
     price?: Resolver<GqlResolversTypes["Int"], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -934,19 +941,20 @@ export type GqlResolvers<ContextType = any> = {
     IP?: GraphQLScalarType;
     IPCPatent?: GraphQLScalarType;
     IPv4?: GraphQLScalarType;
-  IPv6?: GraphQLScalarType;
-  ISBN?: GraphQLScalarType;
-  ISO8601Duration?: GraphQLScalarType;
-  JSON?: GraphQLScalarType;
-  JSONObject?: GraphQLScalarType;
-  JWT?: GraphQLScalarType;
-  JwtToken?: GqlJwtTokenResolvers<ContextType>;
-  LCCSubclass?: GraphQLScalarType;
-  Latitude?: GraphQLScalarType;
-  LocalDate?: GraphQLScalarType;
-  LocalDateTime?: GraphQLScalarType;
-  LocalEndTime?: GraphQLScalarType;
-  LocalTime?: GraphQLScalarType;
+    IPv6?: GraphQLScalarType;
+    ISBN?: GraphQLScalarType;
+    ISO8601Duration?: GraphQLScalarType;
+    Id?: GraphQLScalarType;
+    JSON?: GraphQLScalarType;
+    JSONObject?: GraphQLScalarType;
+    JWT?: GraphQLScalarType;
+    JwtToken?: GqlJwtTokenResolvers<ContextType>;
+    LCCSubclass?: GraphQLScalarType;
+    Latitude?: GraphQLScalarType;
+    LocalDate?: GraphQLScalarType;
+    LocalDateTime?: GraphQLScalarType;
+    LocalEndTime?: GraphQLScalarType;
+    LocalTime?: GraphQLScalarType;
     Locale?: GraphQLScalarType;
     Long?: GraphQLScalarType;
     Longitude?: GraphQLScalarType;
@@ -988,6 +996,6 @@ export type GqlResolvers<ContextType = any> = {
     UnsignedInt?: GraphQLScalarType;
     User?: GqlUserResolvers<ContextType>;
     UtcOffset?: GraphQLScalarType;
-  Void?: GraphQLScalarType;
+    Void?: GraphQLScalarType;
 };
 

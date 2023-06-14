@@ -24,23 +24,18 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
             write: [productsCollection],
             exclusive: [categoriesCollection]
         }, async trx => {
-            const {
-                item: {
-                    beforeUpdate,
-                    afterUpdate
-                }
-            } = await trx.step(() =>
+            const { item: result } = await trx.step(() =>
                 querySingle<{
                     beforeUpdate: Document<DbProduct>,
                     afterUpdate: Document<DbProduct>
-                }>(context.db, aql`
+                } | undefined>(context.db, aql`
                     update ${key} with ${productToInsert} in ${productsCollection}
                     options { ignoreErrors: true }
                     return { beforeUpdate: OLD, afterUpdate: NEW }
                 `)
             );
 
-            if (!afterUpdate)
+            if (!result?.afterUpdate)
                 throw makeApplicationError("UpdateProduct_ProductNotExists", GqlErrorCode.BadRequest);
 
             const { item: category } = await trx.step(() =>
@@ -51,8 +46,8 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
                 `)
             );
 
-            removeAttributes(category, beforeUpdate);
-            addAttributes(category, afterUpdate);
+            removeAttributes(category, result.beforeUpdate);
+            addAttributes(category, result.afterUpdate);
 
             await trx.step(() => context.db.query(aql`
                 update ${category}
@@ -61,12 +56,12 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
             `));
 
             return {
-                id: afterUpdate._id,
+                id: result.afterUpdate._id,
                 category: category.name,
-                description: afterUpdate.description,
-                name: afterUpdate.name,
-                price: afterUpdate.price,
-                attributes: afterUpdate.attributes
+                description: result.afterUpdate.description,
+                name: result.afterUpdate.name,
+                price: result.afterUpdate.price,
+                attributes: result.afterUpdate.attributes
             };
         });
     };
