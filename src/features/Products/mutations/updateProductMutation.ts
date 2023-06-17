@@ -72,7 +72,7 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
                 querySingle<{
                     beforeUpdate: Document<DbProduct>,
                     afterUpdate: Document<DbProduct>
-                } | undefined>(context.db, aql`
+                }>(context.db, aql`
                     update ${key} with ${productToInsert} in ${productsCollection}
                     options { ignoreErrors: true }
                     return { beforeUpdate: OLD, afterUpdate: NEW }
