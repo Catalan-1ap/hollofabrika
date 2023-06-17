@@ -12,11 +12,13 @@ export const productQuery: GqlQueryResolvers<HollofabrikaContext>["product"] =
 
         const categoriesCollection = getCategoriesCollection(context.db);
         const { item } = await querySingle<GqlProduct>(context.db, aql`
-            for category in ${categoriesCollection} 
             for product in ${allProductsView}
+            for category in ${categoriesCollection} 
+            filter parse_identifier(product._id).collection == category.collectionName
             filter product._id == ${args.id}
             return {
                 id: product._id,
+                cover: product.coverName,
                 category: category.name,
                 name: product.name,
                 description: product.description,

@@ -37,14 +37,15 @@ export const productsQuery: GqlQueryResolvers<HollofabrikaContext>["products"] =
             : aql``;
 
         const { items, depletedCursor } = await queryAll<GqlProduct>(context.db, aql`
-            ${joinCategory}
             for product in ${allProductsView}
+            ${joinCategory}
             filter parse_identifier(product._id).collection == category.collectionName
             ${filterByIds}
             ${filterWithFilters}
             limit ${args.input.pageData.pageSize * (args.input.pageData.page - 1)}, ${args.input.pageData.pageSize}
             return {
                 id: product._id,
+                cover: product.coverName,
                 category: category.name,
                 name: product.name,
                 description: product.description,

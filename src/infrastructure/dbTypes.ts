@@ -13,6 +13,7 @@ export type DbCategoryAttribute = DbProductAttribute & {
 
 export type DbProduct = {
     name: string,
+    coverName?: string,
     description: string,
     price: number,
     attributes: DbProductAttribute[]

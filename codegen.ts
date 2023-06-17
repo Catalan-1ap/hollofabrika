@@ -9,8 +9,16 @@ const config: CodegenConfig = {
       plugins: ["typescript", "typescript-resolvers"],
       config: {
         scalars: {
-          JSONObject: "Record<string, any>",
-          Id: "string"
+            JSONObject: "Record<string, any>",
+            Id: "string",
+            Upload: "{" +
+                "file: Promise<{\n" +
+                "  filename: string;\n" +
+                "  mimetype: string;\n" +
+                "  encoding: string;\n" +
+                "  createReadStream(): ReadStream;\n" +
+                "}>" +
+                "}"
         },
         typesPrefix: "Gql",
         maybeValue: "T | undefined",

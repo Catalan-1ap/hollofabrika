@@ -28,8 +28,10 @@ export const deleteCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
             await trx.step(() => context.db.collection(category.collectionName).drop());
 
             return {
-                name: oldCategory.old!.name,
-                attributes: oldCategory.old!.attributes
+                data: {
+                    name: oldCategory.old!.name,
+                    attributes: oldCategory.old!.attributes
+                }
             };
         });
     };

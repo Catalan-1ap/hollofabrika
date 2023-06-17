@@ -15,17 +15,23 @@ export const formatErrorHandler: (
 	formattedError: GraphQLFormattedError,
 	error: unknown,
 ) => GraphQLFormattedError = (formattedError, error) => {
-	if (error instanceof GraphQLError && error.extensions.type === "ApplicationError") {
-		return {
-			message: error.message,
-			code: error.extensions.code
-		};
-	}
+    if (error instanceof GraphQLError && error.extensions.type === "ApplicationError") {
+        return {
+            message: error.message,
+            code: error.extensions.code
+        };
+    }
 
-	console.error("Unhandled, undocumented error occured", error);
+    console.error("Unhandled, undocumented error occured", error);
 
-	return {
-		message: "UndocumentedError",
-		code: GqlErrorCode.InternalError
-	};
+    if (process.env.NODE_ENV === "development" && error instanceof GraphQLError)
+        return {
+            message: error.message,
+            code: GqlErrorCode.InternalError
+        };
+
+    return {
+        message: "UndocumentedError",
+        code: GqlErrorCode.InternalError
+    };
 };

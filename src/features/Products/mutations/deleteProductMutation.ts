@@ -7,6 +7,9 @@ import { DbCategory, DbProduct } from "../../../infrastructure/dbTypes.js";
 import { Document } from "arangojs/documents.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { getCategoriesCollection } from "../../Categories/categories.setup.js";
+import path from "path";
+import { productsCoversPath } from "../../../infrastructure/constants.js";
+import fs from "fs/promises";
 
 
 export const deleteProductMutation: GqlMutationResolvers<HollofabrikaContext>["deleteProduct"] =
@@ -32,6 +35,11 @@ export const deleteProductMutation: GqlMutationResolvers<HollofabrikaContext>["d
             if (!oldProduct)
                 throw makeApplicationError("DeleteProduct_ProductNotExists", GqlErrorCode.BadRequest);
 
+            if (oldProduct.coverName) {
+                const coverPath = path.join(productsCoversPath, oldProduct.coverName);
+                await fs.unlink(coverPath);
+            }
+
             const { item: category } = await trx.step(() =>
                 querySingle<Document<DbCategory>>(context.db, aql`
                     for doc in ${categoriesCollection}
@@ -49,20 +57,23 @@ export const deleteProductMutation: GqlMutationResolvers<HollofabrikaContext>["d
             `));
 
             return {
-                id: oldProduct._id,
-                category: category.name,
-                description: oldProduct.description,
-                name: oldProduct.name,
-                price: oldProduct.price,
-                attributes: oldProduct.attributes
+                data: {
+                    id: oldProduct._id,
+                    cover: oldProduct.coverName,
+                    category: category.name,
+                    description: oldProduct.description,
+                    name: oldProduct.name,
+                    price: oldProduct.price,
+                    attributes: oldProduct.attributes
+                }
             };
-        })
+        });
     };
 
 export function removeAttributes(category: DbCategory, product: DbProduct) {
     for (let attribute of product.attributes) {
         const categoryAttributeIndex = category.attributes
-            .findIndex(x => x.name === attribute.name);
+            .findIndex(x => x.name === attribute.name && x.value === attribute.value);
         const categoryAttribute = category.attributes[categoryAttributeIndex];
 
         if (!categoryAttribute)

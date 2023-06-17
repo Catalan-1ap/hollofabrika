@@ -41,8 +41,10 @@ export const createCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
             }));
 
             return {
-                name: newCategory.new!.name,
-                attributes: newCategory.new!.attributes
+                data: {
+                    name: newCategory.new!.name,
+                    attributes: newCategory.new!.attributes
+                }
             };
         });
     };

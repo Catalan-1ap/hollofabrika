@@ -22,18 +22,41 @@ export async function querySingle<T = any>(db: Database, query: AqlQuery, option
     };
 }
 
-export async function transaction<T>(db: Database, collections: TransactionCollections, callback: (trx: Transaction) => Promise<T>) {
+type TransactionResult<T> = {
+    data: T,
+} & TransactionResultOptions
+
+export type TransactionResultOptions = {
+    finalizers?: (() => Promise<void>)[]
+    catchers?: (() => Promise<void>)[]
+}
+
+
+export async function transaction<T>(
+    db: Database,
+    collections: TransactionCollections,
+    callback: (trx: Transaction) => Promise<TransactionResult<T>>
+) {
     const trx = await db.beginTransaction(collections, {
         allowImplicit: false
     });
 
+    let result: TransactionResult<T> | undefined;
+
     try {
-        const result = await callback(trx);
+        result = await callback(trx);
         await trx.commit();
 
-        return result;
+        return result.data;
     } catch (e) {
         await trx.abort();
+        for (let catcher of result?.catchers || []) {
+            await catcher();
+        }
         throw e;
+    } finally {
+        for (let finalizer of result?.finalizers || []) {
+            await finalizer();
+        }
     }
 }

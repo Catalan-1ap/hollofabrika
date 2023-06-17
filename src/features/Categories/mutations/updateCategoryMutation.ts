@@ -28,8 +28,10 @@ export const updateCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
             );
 
             return {
-                name: afterUpdate.new!.name,
-                attributes: afterUpdate.new!.attributes
+                data: {
+                    name: afterUpdate.new!.name,
+                    attributes: afterUpdate.new!.attributes
+                }
             };
         });
     };

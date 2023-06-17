@@ -12,6 +12,7 @@ import util from "util";
 import { formatErrorHandler } from "./infrastructure/formatErrorHandler.js";
 import { contextHandler, HollofabrikaContext } from "./infrastructure/hollofabrikaContext.js";
 import { reflectionSetup } from "./infrastructure/setups.js";
+import graphqlUploadKoa from "graphql-upload/graphqlUploadKoa.mjs";
 
 
 util.inspect.defaultOptions.depth = 7;
@@ -46,11 +47,14 @@ const server = new ApolloServer<HollofabrikaContext>({
     typeDefs: [...scalarsTypeDefs, typeDefs],
     resolvers: [scalarResolvers, idResolver, resolvers],
     formatError: formatErrorHandler,
+    csrfPrevention: true,
+    cache: "bounded"
 });
 await server.start();
 
 router.use(cors());
 router.use(bodyParser());
+router.use(graphqlUploadKoa());
 router.all("/graphql", koaMiddleware<HollofabrikaContext>(server, {
     context: contextHandler
 }));

@@ -1,4 +1,5 @@
 scalar Id
+scalar Upload
 
 input PageDataInput {
     page: Int!
