@@ -23,6 +23,10 @@ await import("envalid").then(z => z.cleanEnv(process.env, {
 
     SERVER_PORT: z.num(),
 
+    SERVER_STATIC_ROOT_SEGMENT: z.str(),
+    SERVER_STATIC_COVERS_SEGMENT: z.str(),
+    SERVER_STATIC_FALLBACK_FILENAME: z.str(),
+
     ARANGO_URL: z.url(),
     ARANGO_DB: z.str(),
     ARANGO_USER: z.str(),

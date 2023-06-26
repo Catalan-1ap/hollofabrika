@@ -4,6 +4,7 @@ import { getAllProductsView, getCategoriesCollection } from "../../Categories/ca
 import { queryAll } from "../../../infrastructure/arangoUtils.js";
 import { aql } from "arangojs";
 import { defaultPageSize } from "../../../infrastructure/constants.js";
+import { makeCoversUrls } from "../products.services.js";
 
 
 export const productsQuery: GqlQueryResolvers<HollofabrikaContext>["products"] =
@@ -45,7 +46,7 @@ export const productsQuery: GqlQueryResolvers<HollofabrikaContext>["products"] =
             limit ${args.input.pageData.pageSize * (args.input.pageData.page - 1)}, ${args.input.pageData.pageSize}
             return {
                 id: product._id,
-                cover: product.coverName,
+                covers: ${makeCoversUrls(context)},
                 category: category.name,
                 name: product.name,
                 description: product.description,

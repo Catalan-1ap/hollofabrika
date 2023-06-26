@@ -35,8 +35,8 @@ export const deleteProductMutation: GqlMutationResolvers<HollofabrikaContext>["d
             if (!oldProduct)
                 throw makeApplicationError("DeleteProduct_ProductNotExists", GqlErrorCode.BadRequest);
 
-            if (oldProduct.coverName) {
-                const coverPath = path.join(productsCoversPath, oldProduct.coverName);
+            for (const coverFileName of oldProduct.coversFileNames) {
+                const coverPath = path.join(productsCoversPath, coverFileName);
                 await fs.unlink(coverPath);
             }
 
@@ -59,7 +59,7 @@ export const deleteProductMutation: GqlMutationResolvers<HollofabrikaContext>["d
             return {
                 data: {
                     id: oldProduct._id,
-                    cover: oldProduct.coverName,
+                    covers: oldProduct.coversFileNames,
                     category: category.name,
                     description: oldProduct.description,
                     name: oldProduct.name,

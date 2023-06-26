@@ -32,7 +32,7 @@ type ProductsQueryResult {
 }
 
 input CreateProductArgs {
-    cover: Upload
+    covers: [Upload!]
     name: String!
     description: String!
     price: Int!
@@ -40,7 +40,8 @@ input CreateProductArgs {
 }
 
 input UpdateProductArgs {
-    cover: Upload
+    covers: [Upload!]
+    coversNamesToDelete: [String!]
     name: String
     description: String
     price: Int
@@ -49,7 +50,7 @@ input UpdateProductArgs {
 
 type Product {
     id: Id!
-    cover: String
+    covers: [String!]
     category: String!
     description: String!
     name: String!

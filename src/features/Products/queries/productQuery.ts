@@ -4,6 +4,7 @@ import { getAllProductsView, getCategoriesCollection } from "../../Categories/ca
 import { aql } from "arangojs";
 import { querySingle } from "../../../infrastructure/arangoUtils.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
+import { makeCoversUrls } from "../products.services.js";
 
 
 export const productQuery: GqlQueryResolvers<HollofabrikaContext>["product"] =
@@ -18,7 +19,7 @@ export const productQuery: GqlQueryResolvers<HollofabrikaContext>["product"] =
             filter product._id == ${args.id}
             return {
                 id: product._id,
-                cover: product.coverName,
+                covers: ${makeCoversUrls(context)},
                 category: category.name,
                 name: product.name,
                 description: product.description,

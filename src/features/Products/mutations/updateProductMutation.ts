@@ -9,12 +9,11 @@ import { makeApplicationError } from "../../../infrastructure/formatErrorHandler
 import { getCategoriesCollection } from "../../Categories/categories.setup.js";
 import { removeAttributes } from "./deleteProductMutation.js";
 import { addAttributes } from "./createProductMutation.js";
-import { nanoid } from "nanoid";
 import path from "path";
 import { productsCoversPath } from "../../../infrastructure/constants.js";
-import fs from "fs";
-import { catcherDeleteFile, finalizeWritableStream } from "../../../infrastructure/filesUtils.js";
-import { pipeline } from "stream/promises";
+import fs from "fs/promises";
+import { saveProductCover } from "../products.services.js";
+import { mergeTransactionResultOptions } from "../../../infrastructure/utils.js";
 
 
 export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["updateProduct"] =
@@ -26,7 +25,8 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
             name: args.product.name,
             price: args.product.price,
             description: args.product.description,
-            attributes: args.product.attributes
+            attributes: args.product.attributes,
+            coversFileNames: []
         };
         const productsCollection = context.db.collection(collection);
         const categoriesCollection = getCategoriesCollection(context.db);
@@ -51,21 +51,19 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
             if (!old)
                 throw makeApplicationError("UpdateProduct_ProductNotExists", GqlErrorCode.BadRequest);
 
-            if (args.product.cover) {
-                const coverFile = await args.product.cover.file;
+            const coversFileNamesToDelete = old.coversFileNames.filter(x => args.product.coversNamesToDelete?.includes(x));
 
-                productToInsert.coverName = old.coverName ?? `${nanoid()}${path.extname(coverFile?.filename ?? "somethingwentwrong")}`;
+            for (const coverFileName of coversFileNamesToDelete) {
+                const coverPath = path.join(productsCoversPath, coverFileName);
+                await fs.unlink(coverPath);
+            }
 
-                const coverPath = path.join(
-                    productsCoversPath,
-                    productToInsert.coverName
-                );
-                const localCoverStream = fs.createWriteStream(coverPath);
+            for (const cover of args.product.covers ?? []) {
+                const result = await saveProductCover(cover.file);
 
-                transactionResultOptions.finalizers?.push(finalizeWritableStream(localCoverStream));
-                transactionResultOptions.catchers?.push(catcherDeleteFile(coverPath));
+                productToInsert.coversFileNames?.push(result.coverName);
 
-                await pipeline(coverFile.createReadStream(), localCoverStream);
+                mergeTransactionResultOptions(transactionResultOptions, result.transactionResultOptions);
             }
 
             const { item: result } = await trx.step(() =>
@@ -99,13 +97,14 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
             return {
                 data: {
                     id: result.afterUpdate._id,
-                    cover: result.afterUpdate.coverName,
+                    covers: result.afterUpdate.coversFileNames,
                     category: category.name,
                     description: result.afterUpdate.description,
                     name: result.afterUpdate.name,
                     price: result.afterUpdate.price,
                     attributes: result.afterUpdate.attributes
-                }
+                },
+                ...transactionResultOptions
             };
         });
     };
