@@ -1,19 +1,15 @@
 import { GqlErrorCode, GqlMutationResolvers, GqlRole } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { roleGuard } from "../../../infrastructure/authGuards.js";
-import { querySingle, transaction, TransactionResultOptions } from "../../../infrastructure/arangoUtils.js";
+import { querySingle, transaction } from "../../../infrastructure/arangoUtils.js";
 import { Document } from "arangojs/documents.js";
 import { DbCategory, DbProduct } from "../../../infrastructure/dbTypes.js";
 import { aql } from "arangojs";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { getCategoriesCollection } from "../../Categories/categories.setup.js";
-import { removeAttributes } from "./deleteProductMutation.js";
-import { addAttributes } from "./createProductMutation.js";
-import path from "path";
-import { productsCoversPath } from "../../../infrastructure/constants.js";
-import fs from "fs/promises";
-import { saveProductCover } from "../products.services.js";
-import { mergeTransactionResultOptions } from "../../../infrastructure/utils.js";
+import { removeAttributes, removeCovers } from "./deleteProductMutation.js";
+import { addAttributes, saveCovers } from "./createProductMutation.js";
+import { TransactionRecovery } from "../../../infrastructure/transactionRecovery.js";
 
 
 export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["updateProduct"] =
@@ -35,11 +31,6 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
             write: [productsCollection],
             exclusive: [categoriesCollection]
         }, async trx => {
-            const transactionResultOptions: TransactionResultOptions = {
-                finalizers: [],
-                catchers: []
-            };
-
             const { item: old } = await trx.step(() =>
                 querySingle<DbProduct>(context.db, aql`
                     for doc in ${productsCollection}
@@ -51,20 +42,18 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
             if (!old)
                 throw makeApplicationError("UpdateProduct_ProductNotExists", GqlErrorCode.BadRequest);
 
-            const coversFileNamesToDelete = old.coversFileNames.filter(x => args.product.coversNamesToDelete?.includes(x));
+            await removeCovers(old
+                .coversFileNames
+                .filter(x => args.product.coversNamesToDelete?.includes(x))
+            );
 
-            for (const coverFileName of coversFileNamesToDelete) {
-                const coverPath = path.join(productsCoversPath, coverFileName);
-                await fs.unlink(coverPath);
-            }
+            const saveCoversResult = await saveCovers(args.product.covers ?? []);
+            productToInsert.coversFileNames?.push(...saveCoversResult.coversFileNames);
 
-            for (const cover of args.product.covers ?? []) {
-                const result = await saveProductCover(cover.file);
-
-                productToInsert.coversFileNames?.push(result.coverName);
-
-                mergeTransactionResultOptions(transactionResultOptions, result.transactionResultOptions);
-            }
+            productToInsert.coversFileNames?.push(...old
+                .coversFileNames
+                .filter(x => !args.product.coversNamesToDelete?.includes(x))
+            );
 
             const { item: result } = await trx.step(() =>
                 querySingle<{
@@ -85,14 +74,16 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
                 `)
             );
 
-            removeAttributes(category, result.beforeUpdate);
-            addAttributes(category, result.afterUpdate);
+            if (productToInsert.attributes) {
+                removeAttributes(category, result.beforeUpdate.attributes);
+                addAttributes(category, result.afterUpdate.attributes);
 
-            await trx.step(() => context.db.query(aql`
-                update ${category}
-                with ${category} in ${categoriesCollection}
-                options { ignoreRevs: false }
-            `));
+                await trx.step(() => context.db.query(aql`
+                    update ${category}
+                    with ${category} in ${categoriesCollection}
+                    options { ignoreRevs: false }
+                `));
+            }
 
             return {
                 data: {
@@ -104,7 +95,9 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
                     price: result.afterUpdate.price,
                     attributes: result.afterUpdate.attributes
                 },
-                ...transactionResultOptions
+                recoveryActions: new TransactionRecovery().mergeAll([
+                    saveCoversResult.transactionRecovery
+                ])
             };
         });
     };

@@ -3,7 +3,7 @@ import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext
 import { roleGuard } from "../../../infrastructure/authGuards.js";
 import { aql } from "arangojs";
 import { querySingle, transaction } from "../../../infrastructure/arangoUtils.js";
-import { DbCategory, DbProduct } from "../../../infrastructure/dbTypes.js";
+import { DbCategory, DbProduct, DbProductAttribute } from "../../../infrastructure/dbTypes.js";
 import { Document } from "arangojs/documents.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { getCategoriesCollection } from "../../Categories/categories.setup.js";
@@ -35,10 +35,7 @@ export const deleteProductMutation: GqlMutationResolvers<HollofabrikaContext>["d
             if (!oldProduct)
                 throw makeApplicationError("DeleteProduct_ProductNotExists", GqlErrorCode.BadRequest);
 
-            for (const coverFileName of oldProduct.coversFileNames) {
-                const coverPath = path.join(productsCoversPath, coverFileName);
-                await fs.unlink(coverPath);
-            }
+            await removeCovers(oldProduct.coversFileNames);
 
             const { item: category } = await trx.step(() =>
                 querySingle<Document<DbCategory>>(context.db, aql`
@@ -48,12 +45,12 @@ export const deleteProductMutation: GqlMutationResolvers<HollofabrikaContext>["d
                 `)
             );
 
-            removeAttributes(category, oldProduct);
+            removeAttributes(category, oldProduct.attributes);
 
             await trx.step(() => context.db.query(aql`
                 update ${category}
                 with ${category} in ${categoriesCollection}
-                options { ignoreRevs: false, keepNull: false }
+                options { ignoreRevs: false }
             `));
 
             return {
@@ -70,8 +67,9 @@ export const deleteProductMutation: GqlMutationResolvers<HollofabrikaContext>["d
         });
     };
 
-export function removeAttributes(category: DbCategory, product: DbProduct) {
-    for (let attribute of product.attributes) {
+
+export function removeAttributes(category: DbCategory, attributes: DbProductAttribute[]) {
+    for (let attribute of attributes) {
         const categoryAttributeIndex = category.attributes
             .findIndex(x => x.name === attribute.name && x.value === attribute.value);
         const categoryAttribute = category.attributes[categoryAttributeIndex];
@@ -83,5 +81,13 @@ export function removeAttributes(category: DbCategory, product: DbProduct) {
 
         if (categoryAttribute.count <= 0)
             category.attributes.splice(categoryAttributeIndex, 1);
+    }
+}
+
+
+export async function removeCovers(coversFileNames: string[]) {
+    for (const coverFileName of coversFileNames) {
+        const coverPath = path.join(productsCoversPath, coverFileName);
+        await fs.unlink(coverPath);
     }
 }

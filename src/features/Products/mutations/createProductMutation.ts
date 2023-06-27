@@ -1,13 +1,13 @@
-import { GqlErrorCode, GqlMutationResolvers, GqlRole } from "../../../infrastructure/gqlTypes.js";
+import { GqlErrorCode, GqlMutationResolvers, GqlRole, Scalars } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { roleGuard } from "../../../infrastructure/authGuards.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { getCategory } from "../../Categories/categories.services.js";
-import { DbCategory, DbProduct } from "../../../infrastructure/dbTypes.js";
+import { DbCategory, DbProduct, DbProductAttribute } from "../../../infrastructure/dbTypes.js";
 import { aql } from "arangojs";
-import { transaction, TransactionResultOptions } from "../../../infrastructure/arangoUtils.js";
+import { transaction } from "../../../infrastructure/arangoUtils.js";
 import { saveProductCover } from "../products.services.js";
-import { mergeTransactionResultOptions } from "../../../infrastructure/utils.js";
+import { TransactionRecovery } from "../../../infrastructure/transactionRecovery.js";
 
 
 export const createProductMutation: GqlMutationResolvers<HollofabrikaContext>["createProduct"] =
@@ -29,28 +29,16 @@ export const createProductMutation: GqlMutationResolvers<HollofabrikaContext>["c
             attributes: args.product.attributes,
             coversFileNames: []
         };
-
-        addAttributes(category, productToInsert);
-
+        addAttributes(category, productToInsert.attributes);
         const productsCollection = context.db.collection<DbProduct>(category.collectionName);
+
+        const saveCoversResult = await saveCovers(args.product.covers ?? []);
+        productToInsert.coversFileNames.push(...saveCoversResult.coversFileNames);
 
         return await transaction(context.db, {
             write: [productsCollection],
             exclusive: [categoriesCollection]
         }, async trx => {
-            const transactionResultOptions: TransactionResultOptions = {
-                finalizers: [],
-                catchers: []
-            };
-
-            for (const cover of args.product.covers ?? []) {
-                const result = await saveProductCover(cover.file);
-
-                productToInsert.coversFileNames.push(result.coverName);
-
-                mergeTransactionResultOptions(transactionResultOptions, result.transactionResultOptions);
-            }
-
             const newProduct = await trx.step(() =>
                 productsCollection.save(productToInsert, { returnNew: true })
             );
@@ -71,13 +59,16 @@ export const createProductMutation: GqlMutationResolvers<HollofabrikaContext>["c
                     price: newProduct.new!.price,
                     attributes: newProduct.new!.attributes
                 },
-                ...transactionResultOptions
+                recoveryActions: new TransactionRecovery().mergeAll([
+                    saveCoversResult.transactionRecovery
+                ])
             };
         });
     };
 
-export function addAttributes(category: DbCategory, product: DbProduct) {
-    for (let attribute of product.attributes) {
+
+export function addAttributes(category: DbCategory, attributes: DbProductAttribute[]) {
+    for (let attribute of attributes) {
         const categoryAttribute = category.attributes
             .find(x => x.name === attribute.name && x.value === attribute.value);
 
@@ -91,4 +82,23 @@ export function addAttributes(category: DbCategory, product: DbProduct) {
             count: 1
         });
     }
+}
+
+
+export async function saveCovers(covers: Scalars["Upload"][]) {
+    const transactionRecovery = new TransactionRecovery();
+    const coversFileNames: string[] = [];
+
+    for (const cover of covers) {
+        const result = await saveProductCover(cover.file);
+
+        coversFileNames.push(result.coverName);
+
+        transactionRecovery.merge(result.transactionRecovery);
+    }
+
+    return {
+        coversFileNames,
+        transactionRecovery
+    };
 }

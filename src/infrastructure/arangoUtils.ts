@@ -2,6 +2,7 @@ import { Database } from "arangojs";
 import { AqlQuery } from "arangojs/aql.js";
 import { QueryOptions, TransactionCollections } from "arangojs/database.js";
 import { Transaction } from "arangojs/transaction.js";
+import { TransactionRecovery } from "./transactionRecovery.js";
 
 
 export async function queryAll<T = any>(db: Database, query: AqlQuery, options?: QueryOptions) {
@@ -13,6 +14,7 @@ export async function queryAll<T = any>(db: Database, query: AqlQuery, options?:
     };
 }
 
+
 export async function querySingle<T = any>(db: Database, query: AqlQuery, options?: QueryOptions) {
     const { items, depletedCursor } = await queryAll<T>(db, query, options);
 
@@ -22,14 +24,10 @@ export async function querySingle<T = any>(db: Database, query: AqlQuery, option
     };
 }
 
+
 type TransactionResult<T> = {
     data: T,
-} & TransactionResultOptions
-
-export type TransactionResultOptions = {
-    finalizers?: (() => Promise<void>)[]
-    catchers?: (() => Promise<void>)[]
-}
+} & { recoveryActions?: TransactionRecovery }
 
 
 export async function transaction<T>(
@@ -50,12 +48,12 @@ export async function transaction<T>(
         return result.data;
     } catch (e) {
         await trx.abort();
-        for (let catcher of result?.catchers || []) {
+        for (let catcher of result?.recoveryActions?.catchers || []) {
             await catcher();
         }
         throw e;
     } finally {
-        for (let finalizer of result?.finalizers || []) {
+        for (let finalizer of result?.recoveryActions?.finalizers || []) {
             await finalizer();
         }
     }
