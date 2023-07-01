@@ -1,19 +1,22 @@
-import { loadFiles as toolsLoadFiles } from "@graphql-tools/load-files";
-import { mergeResolvers, mergeTypeDefs } from "@graphql-tools/merge";
-import { arangojs, Database } from "arangojs";
-import url from "url";
+import {loadFiles as toolsLoadFiles} from "@graphql-tools/load-files";
+import {mergeResolvers, mergeTypeDefs} from "@graphql-tools/merge";
+import {arangojs, Database} from "arangojs";
+import url, {fileURLToPath} from "url";
+import path from "path";
 
 
 export type SetupHandler = (db: Database) => Promise<void> | void
 
 export async function reflectionSetup() {
+	const dirname = path.dirname(fileURLToPath(import.meta.url));
+
 	const [typeDefs, resolvers] = await Promise.all([
-		loadFilesSync("./src/features/**/*.schema.graphql").then(mergeTypeDefs),
+		loadFilesSync(path.join(dirname, "../features/**/*.schema.graphql")).then(mergeTypeDefs),
 		Promise.all([
-			loadFilesSync("./src/features/**/*.queries.ts"),
-			loadFilesSync("./src/features/**/*.mutations.ts")
+			loadFilesSync(path.join(dirname, "../features/**/*.queries.ts")),
+			loadFilesSync(path.join(dirname, "../features/**/*.mutations.ts"))
 		]).then(z => z.flat()).then(mergeResolvers),
-		loadFilesSync("./src/features/**/*.setup.ts").then(setup)
+		loadFilesSync(path.join(dirname, "../features/**/*.setup.ts")).then(setup)
 	]);
 
 	return {
