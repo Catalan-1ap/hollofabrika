@@ -8,6 +8,7 @@ export default {
 		const cpy = (await import("cpy")).default;
 		await cpy(
 			[
+				"./src/**/*.graphql",
 				"./.env"
 			],
 			"./dist"
