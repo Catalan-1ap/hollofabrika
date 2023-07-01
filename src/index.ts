@@ -37,6 +37,7 @@ await import("envalid").then(z => z.cleanEnv(process.env, {
     JWT_REFRESH_EXPIRE: z.str(),
 
     GMAIL_MAIL: z.email(),
+    GMAIL_PASSWORD: z.str(),
 }));
 
 
