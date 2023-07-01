@@ -16,7 +16,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            cd ~/root/hollofabrika/
+            cd ~/hollofabrika/
             git pull
             npm i
             rm -r -f dist
