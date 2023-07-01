@@ -11,7 +11,7 @@ export const verifyEmailMutation: GqlMutationResolvers<HollofabrikaContext>["ver
     async (_, args, context) => {
         const temporalTokensCollection = getTemporalTokensCollection(context.db);
 
-        const { item: registerToken } = await querySingle<DbRegisterTemporalToken>(context.db, aql`
+        const registerToken = await querySingle<DbRegisterTemporalToken>(context.db, aql`
 			for doc in ${temporalTokensCollection}
 			filter doc.type == "register" and doc.emailToken == ${args.emailToken} and doc.confirmToken == ${args.confirmToken}
 			remove doc in ${temporalTokensCollection}

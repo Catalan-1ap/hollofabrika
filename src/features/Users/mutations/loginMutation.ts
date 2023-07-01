@@ -13,7 +13,7 @@ export const loginMutation: GqlMutationResolvers<HollofabrikaContext>["login"] =
     async (_, args, context) => {
         const usersCollection = getUsersCollection(context.db);
 
-        const { item: user } = await querySingle<Document<DbUser>>(context.db, aql`
+        const user = await querySingle<Document<DbUser>>(context.db, aql`
 			for doc in ${usersCollection}
 			filter doc.username == ${args.username} or doc.email == ${args.username}
 			return doc

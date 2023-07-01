@@ -59,16 +59,16 @@ export type Scalars = {
   NonNegativeFloat: any;
   NonNegativeInt: any;
   NonPositiveFloat: any;
-  NonPositiveInt: any;
-  ObjectID: any;
-  PhoneNumber: any;
-  Port: any;
-  PositiveFloat: any;
-  PositiveInt: any;
-  PostalCode: any;
-  RGB: any;
-  RGBA: any;
-  RoutingNumber: any;
+    NonPositiveInt: any;
+    ObjectID: any;
+    PhoneNumber: any;
+    Port: any;
+    PositiveFloat: any;
+    PositiveInt: any;
+    PostalCode: any;
+    RGB: any;
+    RGBA: any;
+    RoutingNumber: any;
     SafeInt: any;
     SemVer: any;
     Time: any;
@@ -131,27 +131,34 @@ export type GqlJwtToken = {
 };
 
 export type GqlMutation = {
-  createCategory: GqlCategory;
-  createProduct: GqlProduct;
-  deleteCategory: GqlCategory;
-  deleteProduct: GqlProduct;
-  login?: Maybe<GqlJwtToken>;
-  refresh?: Maybe<GqlJwtToken>;
-  register?: Maybe<GqlRegisterResponse>;
-  updateCategory: GqlCategory;
-  updateProduct: GqlProduct;
-  verifyEmail?: Maybe<GqlSuccess>;
+    changeCategory: GqlProduct;
+    createCategory: GqlCategory;
+    createProduct: GqlProduct;
+    deleteCategory: GqlCategory;
+    deleteProduct: GqlProduct;
+    login?: Maybe<GqlJwtToken>;
+    refresh?: Maybe<GqlJwtToken>;
+    register?: Maybe<GqlRegisterResponse>;
+    updateCategory: GqlCategory;
+    updateProduct: GqlProduct;
+    verifyEmail?: Maybe<GqlSuccess>;
+};
+
+
+export type GqlMutationChangeCategoryArgs = {
+    category: Scalars["String"];
+    id: Scalars["Id"];
 };
 
 
 export type GqlMutationCreateCategoryArgs = {
-  name: Scalars['String'];
+    name: Scalars["String"];
 };
 
 
 export type GqlMutationCreateProductArgs = {
-  category: Scalars['String'];
-  product: GqlCreateProductArgs;
+    category: Scalars["String"];
+    product: GqlCreateProductArgs;
 };
 
 
@@ -747,6 +754,7 @@ export interface GqlMacScalarConfig extends GraphQLScalarTypeConfig<GqlResolvers
 }
 
 export type GqlMutationResolvers<ContextType = any, ParentType extends GqlResolversParentTypes['Mutation'] = GqlResolversParentTypes['Mutation']> = {
+    changeCategory?: Resolver<GqlResolversTypes["Product"], ParentType, ContextType, RequireFields<GqlMutationChangeCategoryArgs, "category" | "id">>;
     createCategory?: Resolver<GqlResolversTypes["Category"], ParentType, ContextType, RequireFields<GqlMutationCreateCategoryArgs, "name">>;
     createProduct?: Resolver<GqlResolversTypes["Product"], ParentType, ContextType, RequireFields<GqlMutationCreateProductArgs, "category" | "product">>;
     deleteCategory?: Resolver<GqlResolversTypes["Category"], ParentType, ContextType, RequireFields<GqlMutationDeleteCategoryArgs, "name">>;

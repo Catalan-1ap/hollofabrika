@@ -4,7 +4,10 @@ import { GqlErrorCode, GqlMutationResolvers, GqlRole } from "../../../infrastruc
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { getAllProductsView, getProductsCollection } from "../categories.setup.js";
 import { getCategory } from "../categories.services.js";
-import { transaction } from "../../../infrastructure/arangoUtils.js";
+import { querySingle, transaction } from "../../../infrastructure/arangoUtils.js";
+import { Document } from "arangojs/documents.js";
+import { DbCategory } from "../../../infrastructure/dbTypes.js";
+import { aql } from "arangojs";
 
 
 export const createCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["createCategory"] =
@@ -19,16 +22,22 @@ export const createCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
             throw makeApplicationError("CreateCategory_CategoryExists", GqlErrorCode.BadRequest);
 
         const productsCollection = getProductsCollection(context.db, crypto.randomUUID());
+        const categoryToInsert: DbCategory = {
+            name: args.name,
+            collectionName: productsCollection.name,
+            attributes: []
+        };
 
         return await transaction(context.db, {
             exclusive: [categoriesCollection]
         }, async trx => {
-            const newCategory = await trx.step(() => categoriesCollection.save({
-                    name: args.name,
-                    collectionName: productsCollection.name,
-                    attributes: []
-                }, { returnNew: true })
+            const newCategory = await trx.step(() =>
+                querySingle<Document<DbCategory>>(context.db, aql`
+                    insert ${categoryToInsert} in ${categoriesCollection}
+                    return NEW
+                `)
             );
+
             await trx.step(() => productsCollection.create());
             await trx.step(() => getAllProductsView(context.db).updateProperties({
                 links: {
@@ -42,8 +51,8 @@ export const createCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
 
             return {
                 data: {
-                    name: newCategory.new!.name,
-                    attributes: newCategory.new!.attributes
+                    name: newCategory.name,
+                    attributes: newCategory.attributes,
                 }
             };
         });

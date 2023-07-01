@@ -2,7 +2,7 @@ import { GqlErrorCode, GqlMutationResolvers, GqlRole } from "../../../infrastruc
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { roleGuard } from "../../../infrastructure/authGuards.js";
 import { aql } from "arangojs";
-import { querySingle, transaction } from "../../../infrastructure/arangoUtils.js";
+import { parseIdentifier, querySingle, transaction } from "../../../infrastructure/arangoUtils.js";
 import { DbCategory, DbProduct, DbProductAttribute } from "../../../infrastructure/dbTypes.js";
 import { Document } from "arangojs/documents.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
@@ -16,34 +16,35 @@ export const deleteProductMutation: GqlMutationResolvers<HollofabrikaContext>["d
     async (_, args, context) => {
         roleGuard(context, GqlRole.Admin);
 
-        const [collection, key] = args.id.split("/");
-        const productsCollection = context.db.collection(collection);
+        const identifier = parseIdentifier(args.id);
+        const productsCollection = context.db.collection(identifier.collection);
         const categoriesCollection = getCategoriesCollection(context.db);
+
+        const oldProduct = await querySingle<Document<DbProduct>>(context.db, aql`
+            for doc in ${productsCollection}
+            filter doc._key == ${identifier.key}
+            return doc
+        `);
+
+        if (!oldProduct)
+            throw makeApplicationError("DeleteProduct_ProductNotExists", GqlErrorCode.BadRequest);
+
+        const category = await querySingle<Document<DbCategory>>(context.db, aql`
+            for doc in ${categoriesCollection}
+            filter doc.collectionName == ${identifier.collection}
+            return doc
+        `);
 
         return await transaction(context.db, {
             write: [productsCollection],
             exclusive: [categoriesCollection]
         }, async trx => {
-            const { item: oldProduct } = await trx.step(() =>
-                querySingle<Document<DbProduct>>(context.db, aql`
-                    remove ${key} in ${productsCollection}
-                    options { ignoreErrors: true }
-                    return OLD
-                `)
-            );
-
-            if (!oldProduct)
-                throw makeApplicationError("DeleteProduct_ProductNotExists", GqlErrorCode.BadRequest);
+            await trx.step(() => querySingle<Document<DbProduct>>(context.db, aql`
+                remove ${oldProduct} in ${productsCollection}
+                options { ignoreRevs: false }
+            `));
 
             await removeCovers(oldProduct.coversFileNames);
-
-            const { item: category } = await trx.step(() =>
-                querySingle<Document<DbCategory>>(context.db, aql`
-                    for doc in ${categoriesCollection}
-                    filter doc.collectionName == ${collection}
-                    return doc
-                `)
-            );
 
             removeAttributes(category, oldProduct.attributes);
 

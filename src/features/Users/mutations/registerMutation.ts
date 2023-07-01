@@ -19,7 +19,7 @@ export const registerMutation: GqlMutationResolvers<HollofabrikaContext>["regist
             write: [temporalTokensCollection]
         });
 
-        const { item: existed } = await trx.step(() => querySingle<DbUser>(context.db, aql`
+        const existed = await trx.step(() => querySingle<DbUser>(context.db, aql`
 			for doc in ${usersCollection}
 			filter doc.username == ${args.username} or doc.email == ${args.email}
 			return doc

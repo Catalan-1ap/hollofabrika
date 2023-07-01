@@ -3,7 +3,9 @@ import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext
 import { roleGuard } from "../../../infrastructure/authGuards.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { getCategory } from "../categories.services.js";
-import { transaction } from "../../../infrastructure/arangoUtils.js";
+import { querySingle, transaction } from "../../../infrastructure/arangoUtils.js";
+import { aql } from "arangojs";
+import { DbCategory } from "../../../infrastructure/dbTypes.js";
 
 
 export const updateCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["updateCategory"] =
@@ -18,19 +20,26 @@ export const updateCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
         if (!isCategoryExists)
             throw makeApplicationError("UpdateCategory_CategoryNotExists", GqlErrorCode.BadRequest);
 
+        const categoryToUpdate: Partial<DbCategory> = {
+            name: args.newName
+        };
+
         return await transaction(context.db, {
             exclusive: [categoriesCollection]
         }, async trx => {
             const afterUpdate = await trx.step(() =>
-                categoriesCollection.update(category, {
-                    name: args.newName
-                }, { returnNew: true, ignoreRevs: false })
+                querySingle(context.db, aql`
+                    update ${category}
+                    with ${categoryToUpdate} in ${categoriesCollection}
+                    options { ignoreRevs: false }
+                    return NEW
+                `)
             );
 
             return {
                 data: {
-                    name: afterUpdate.new!.name,
-                    attributes: afterUpdate.new!.attributes
+                    name: afterUpdate.name,
+                    attributes: afterUpdate.attributes
                 }
             };
         });

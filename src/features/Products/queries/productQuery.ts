@@ -12,7 +12,7 @@ export const productQuery: GqlQueryResolvers<HollofabrikaContext>["product"] =
         const allProductsView = getAllProductsView(context.db);
 
         const categoriesCollection = getCategoriesCollection(context.db);
-        const { item } = await querySingle<GqlProduct>(context.db, aql`
+        const item = await querySingle<GqlProduct>(context.db, aql`
             for product in ${allProductsView}
             for category in ${categoriesCollection} 
             filter parse_identifier(product._id).collection == category.collectionName

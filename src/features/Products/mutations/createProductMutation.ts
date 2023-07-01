@@ -5,9 +5,10 @@ import { makeApplicationError } from "../../../infrastructure/formatErrorHandler
 import { getCategory } from "../../Categories/categories.services.js";
 import { DbCategory, DbProduct, DbProductAttribute } from "../../../infrastructure/dbTypes.js";
 import { aql } from "arangojs";
-import { transaction } from "../../../infrastructure/arangoUtils.js";
+import { querySingle, transaction } from "../../../infrastructure/arangoUtils.js";
 import { saveProductCover } from "../products.services.js";
 import { TransactionRecovery } from "../../../infrastructure/transactionRecovery.js";
+import { Document } from "arangojs/documents.js";
 
 
 export const createProductMutation: GqlMutationResolvers<HollofabrikaContext>["createProduct"] =
@@ -22,7 +23,7 @@ export const createProductMutation: GqlMutationResolvers<HollofabrikaContext>["c
         if (!isCategoryExists)
             throw makeApplicationError("CreateProduct_CategoryNotExists", GqlErrorCode.BadRequest);
 
-        const productToInsert: DbProduct = {
+        const productToInsert: Required<DbProduct> = {
             name: args.product.name,
             price: args.product.price,
             description: args.product.description,
@@ -40,7 +41,11 @@ export const createProductMutation: GqlMutationResolvers<HollofabrikaContext>["c
             exclusive: [categoriesCollection]
         }, async trx => {
             const newProduct = await trx.step(() =>
-                productsCollection.save(productToInsert, { returnNew: true })
+                querySingle<Document<DbProduct>>(context.db, aql`
+                    insert ${productToInsert} in ${productsCollection}
+                    options { ignoreErrors: true }
+                    return NEW
+                `)
             );
 
             await trx.step(() => context.db.query(aql`
@@ -51,13 +56,13 @@ export const createProductMutation: GqlMutationResolvers<HollofabrikaContext>["c
 
             return {
                 data: {
-                    id: newProduct.new!._id,
-                    covers: newProduct.new!.coversFileNames,
+                    id: newProduct._id,
+                    covers: newProduct.coversFileNames,
                     category: category.name,
-                    description: newProduct.new!.description,
-                    name: newProduct.new!.name,
-                    price: newProduct.new!.price,
-                    attributes: newProduct.new!.attributes
+                    description: newProduct.description,
+                    name: newProduct.name,
+                    price: newProduct.price,
+                    attributes: newProduct.attributes
                 },
                 recoveryActions: new TransactionRecovery().mergeAll([
                     saveCoversResult.transactionRecovery

@@ -3,7 +3,10 @@ import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext
 import { roleGuard } from "../../../infrastructure/authGuards.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { getCategory } from "../categories.services.js";
-import { transaction } from "../../../infrastructure/arangoUtils.js";
+import { querySingle, transaction } from "../../../infrastructure/arangoUtils.js";
+import { Document } from "arangojs/documents.js";
+import { DbCategory } from "../../../infrastructure/dbTypes.js";
+import { aql } from "arangojs";
 
 
 export const deleteCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["deleteCategory"] =
@@ -21,16 +24,20 @@ export const deleteCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
         return await transaction(context.db, {
             exclusive: [categoriesCollection]
         }, async trx => {
-            const oldCategory = await trx.step(() => categoriesCollection.remove({
-                    _key: category._key
-                }, { returnOld: true })
+            const oldCategory = await trx.step(() =>
+                querySingle<Document<DbCategory>>(context.db, aql`
+                    remove ${category} in ${categoriesCollection}
+                    options { ignoreRevs: false }
+                    return OLD
+                `)
             );
+
             await trx.step(() => context.db.collection(category.collectionName).drop());
 
             return {
                 data: {
-                    name: oldCategory.old!.name,
-                    attributes: oldCategory.old!.attributes
+                    name: oldCategory.name,
+                    attributes: oldCategory.attributes
                 }
             };
         });

@@ -7,6 +7,7 @@ type Mutation {
     createProduct(category: String!, product: CreateProductArgs!): Product!
     deleteProduct(id: Id!): Product!
     updateProduct(id: Id!, product: UpdateProductArgs!): Product!
+    changeCategory(id: Id!, category: String!): Product!
 }
 
 input ProductsQueryInput {

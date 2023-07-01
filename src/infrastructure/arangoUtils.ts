@@ -16,12 +16,9 @@ export async function queryAll<T = any>(db: Database, query: AqlQuery, options?:
 
 
 export async function querySingle<T = any>(db: Database, query: AqlQuery, options?: QueryOptions) {
-    const { items, depletedCursor } = await queryAll<T>(db, query, options);
+    const { items } = await queryAll<T>(db, query, options);
 
-    return {
-        item: items[0],
-        depletedCursor: depletedCursor
-    };
+    return items[0];
 }
 
 
@@ -57,4 +54,14 @@ export async function transaction<T>(
             await finalizer();
         }
     }
+}
+
+
+export function parseIdentifier(id: string) {
+    const res = id.split("/");
+
+    return {
+        collection: res[0],
+        key: res[1]
+    };
 }

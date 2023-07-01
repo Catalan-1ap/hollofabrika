@@ -1,7 +1,7 @@
-import { GqlErrorCode, GqlMutationResolvers, GqlRole } from "../../../infrastructure/gqlTypes.js";
+import { GqlErrorCode, GqlMutationResolvers, GqlRole, Scalars } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { roleGuard } from "../../../infrastructure/authGuards.js";
-import { querySingle, transaction } from "../../../infrastructure/arangoUtils.js";
+import { parseIdentifier, querySingle, transaction } from "../../../infrastructure/arangoUtils.js";
 import { Document } from "arangojs/documents.js";
 import { DbCategory, DbProduct } from "../../../infrastructure/dbTypes.js";
 import { aql } from "arangojs";
@@ -16,7 +16,7 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
     async (_, args, context) => {
         roleGuard(context, GqlRole.Admin);
 
-        const [collection, key] = args.id.split("/");
+        const { collection, key } = parseIdentifier(args.id);
         const productToInsert: Partial<DbProduct> = {
             name: args.product.name,
             price: args.product.price,
@@ -27,35 +27,33 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
         const productsCollection = context.db.collection(collection);
         const categoriesCollection = getCategoriesCollection(context.db);
 
+        const oldProduct = await querySingle<Document<DbProduct>>(context.db, aql`
+            for doc in ${productsCollection}
+            filter doc._key == ${key}
+            return doc
+        `);
+
+        if (!oldProduct)
+            throw makeApplicationError("UpdateProduct_ProductNotExists", GqlErrorCode.BadRequest);
+
+        const category = await querySingle<Document<DbCategory>>(context.db, aql`
+            for doc in ${categoriesCollection}
+            filter doc.collectionName == ${collection}
+            return doc
+        `);
+
         return await transaction(context.db, {
             write: [productsCollection],
             exclusive: [categoriesCollection]
         }, async trx => {
-            const { item: old } = await trx.step(() =>
-                querySingle<DbProduct>(context.db, aql`
-                    for doc in ${productsCollection}
-                    filter doc._key == ${key}
-                    return doc
-                `)
+            const updateCoversResult = await updateCovers(
+                oldProduct,
+                productToInsert,
+                args.product.covers ?? [],
+                args.product.coversNamesToDelete
             );
 
-            if (!old)
-                throw makeApplicationError("UpdateProduct_ProductNotExists", GqlErrorCode.BadRequest);
-
-            await removeCovers(old
-                .coversFileNames
-                .filter(x => args.product.coversNamesToDelete?.includes(x))
-            );
-
-            const saveCoversResult = await saveCovers(args.product.covers ?? []);
-            productToInsert.coversFileNames?.push(...saveCoversResult.coversFileNames);
-
-            productToInsert.coversFileNames?.push(...old
-                .coversFileNames
-                .filter(x => !args.product.coversNamesToDelete?.includes(x))
-            );
-
-            const { item: result } = await trx.step(() =>
+            const result = await trx.step(() =>
                 querySingle<{
                     beforeUpdate: Document<DbProduct>,
                     afterUpdate: Document<DbProduct>
@@ -63,14 +61,6 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
                     update ${key} with ${productToInsert} in ${productsCollection}
                     options { ignoreErrors: true }
                     return { beforeUpdate: OLD, afterUpdate: NEW }
-                `)
-            );
-
-            const { item: category } = await trx.step(() =>
-                querySingle<Document<DbCategory>>(context.db, aql`
-                    for doc in ${categoriesCollection}
-                    filter doc.collectionName == ${collection}
-                    return doc
                 `)
             );
 
@@ -96,8 +86,31 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
                     attributes: result.afterUpdate.attributes
                 },
                 recoveryActions: new TransactionRecovery().mergeAll([
-                    saveCoversResult.transactionRecovery
+                    updateCoversResult.transactionRecovery
                 ])
             };
         });
     };
+
+
+async function updateCovers(
+    oldProduct: DbProduct,
+    productToInsert: Partial<DbProduct>,
+    newCovers: Scalars["Upload"][],
+    coversNamesToDelete?: string[]
+) {
+    await removeCovers(oldProduct
+        .coversFileNames
+        .filter(x => coversNamesToDelete?.includes(x))
+    );
+
+    const saveCoversResult = await saveCovers(newCovers);
+    productToInsert.coversFileNames?.push(...saveCoversResult.coversFileNames);
+
+    productToInsert.coversFileNames?.push(...oldProduct
+        .coversFileNames
+        .filter(x => coversNamesToDelete?.includes(x))
+    );
+
+    return saveCoversResult;
+}
