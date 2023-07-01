@@ -6,10 +6,6 @@ input PageDataInput {
     pageSize: Int!
 }
 
-type Test {
-    message: String
-}
-
 type PageData {
     totalPages: Int!
     page: Int!,
