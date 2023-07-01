@@ -1,11 +1,12 @@
-import {loadFiles as toolsLoadFiles} from "@graphql-tools/load-files";
-import {mergeResolvers, mergeTypeDefs} from "@graphql-tools/merge";
-import {arangojs, Database} from "arangojs";
-import url, {fileURLToPath} from "url";
+import { loadFiles as toolsLoadFiles } from "@graphql-tools/load-files";
+import { mergeResolvers, mergeTypeDefs } from "@graphql-tools/merge";
+import { arangojs, Database } from "arangojs";
+import url, { fileURLToPath } from "url";
 import path from "path";
 
 
 export type SetupHandler = (db: Database) => Promise<void> | void
+
 
 export async function reflectionSetup() {
 	const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -25,6 +26,7 @@ export async function reflectionSetup() {
 	};
 }
 
+
 export function connectToDb() {
 	return arangojs({
 		url: process.env.ARANGO_URL!,
@@ -36,11 +38,13 @@ export function connectToDb() {
 	});
 }
 
+
 async function setup(setups: SetupHandler[]) {
 	const db = connectToDb();
 
 	await Promise.all(setups.map(z => z(db)));
 }
+
 
 function loadFilesSync(pattern: string) {
 	return toolsLoadFiles(pattern, {
