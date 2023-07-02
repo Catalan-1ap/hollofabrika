@@ -19,6 +19,7 @@ export default setup;
 
 async function usersCollectionSetup(db: Database) {
     const usersCollection = getUsersCollection(db);
+
     if (!await usersCollection.exists())
         await usersCollection.create();
 }
@@ -26,7 +27,8 @@ async function usersCollectionSetup(db: Database) {
 
 async function temporalTokensCollectionSetup(db: Database) {
     const temporalTokensCollection = getTemporalTokensCollection(db);
-    if (!await temporalTokensCollection.exists()) {
+
+    if (!await temporalTokensCollection.exists())
         await temporalTokensCollection.create({
             computedValues: [
                 {
@@ -38,26 +40,25 @@ async function temporalTokensCollectionSetup(db: Database) {
             ]
         });
 
-        if (process.env.NODE_ENV === "production") {
-            await temporalTokensCollection.ensureIndex({
-                type: "ttl",
-                fields: ["createdAt"],
-                expireAfter: 300
-            });
-        }
+    if (process.env.NODE_ENV === "production") {
+        await temporalTokensCollection.ensureIndex({
+            type: "ttl",
+            fields: ["createdAt"],
+            expireAfter: 300
+        });
     }
 }
 
 
 async function refreshTokensCollectionSetup(db: Database) {
     const refreshTokensCollection = getRefreshTokensCollection(db);
-    if (!await refreshTokensCollection.exists()) {
+
+    if (!await refreshTokensCollection.exists())
         await refreshTokensCollection.create();
 
-        await refreshTokensCollection.ensureIndex({
-            type: "ttl",
-            fields: ["expireAt"],
-            expireAfter: 0
-        });
-    }
+    await refreshTokensCollection.ensureIndex({
+        type: "ttl",
+        fields: ["expireAt"],
+        expireAfter: 0
+    });
 }

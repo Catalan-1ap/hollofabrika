@@ -25,6 +25,7 @@ export default setup;
 
 async function allProductsViewSetup(db: Database) {
     const allProductsView = getAllProductsView(db);
+
     if (!await allProductsView.exists())
         await allProductsView.create({
             type: "arangosearch"
