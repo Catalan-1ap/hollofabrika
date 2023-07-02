@@ -5,7 +5,7 @@ import { DbCategory } from "../../infrastructure/dbTypes.js";
 import { aql, Database } from "arangojs";
 
 
-export async function getCategory(db: Database, categoryName: string) {
+export async function queryCategory(db: Database, categoryName: string) {
     const categoriesCollection = getCategoriesCollection(db);
     const category = await querySingle<Document<DbCategory>>(db, aql`
 			for doc in ${categoriesCollection}

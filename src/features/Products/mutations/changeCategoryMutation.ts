@@ -9,6 +9,7 @@ import { aql } from "arangojs";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { removeAttributes } from "./deleteProductMutation.js";
 import { addAttributes } from "./createProductMutation.js";
+import { queryCategory } from "../../Categories/categories.services.js";
 
 
 export const changeCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["changeCategory"] =
@@ -26,11 +27,7 @@ export const changeCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
             throw makeApplicationError("ChangeCategory_ProductNotExists", GqlErrorCode.BadRequest);
 
         const categoriesCollection = getCategoriesCollection(context.db);
-        const newCategory = await querySingle<Document<DbCategory>>(context.db, aql`
-            for doc in ${categoriesCollection}
-            filter doc.name == ${args.category}
-            return doc
-        `);
+        const { category: newCategory } = await queryCategory(context.db, args.category);
         if (!newCategory)
             throw makeApplicationError("ChangeCategory_NewCategoryNotExists", GqlErrorCode.BadRequest);
 
@@ -63,9 +60,10 @@ export const changeCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
                 attributes: product.attributes,
                 coversFileNames: product.coversFileNames
             };
-            await trx.step(() => querySingle<Document<DbProduct>>(context.db, aql`
+            const newProduct = await trx.step(() => querySingle<Document<DbProduct>>(context.db, aql`
                 insert ${productToInsert} in ${newCategoryProducts}
                 options { ignoreErrors: true }
+                return NEW
             `));
 
             await trx.step(() => context.db.query(aql`
@@ -81,13 +79,13 @@ export const changeCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
 
             return {
                 data: {
-                    id: product._id,
-                    covers: product.coversFileNames,
+                    id: newProduct._id,
+                    covers: newProduct.coversFileNames,
                     category: newCategory.name,
-                    description: product.description,
-                    name: product.name,
-                    price: product.price,
-                    attributes: product.attributes
+                    description: newProduct.description,
+                    name: newProduct.name,
+                    price: newProduct.price,
+                    attributes: newProduct.attributes
                 }
             };
         });

@@ -2,7 +2,7 @@ import { GqlErrorCode, GqlMutationResolvers, GqlRole } from "../../../infrastruc
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { roleGuard } from "../../../infrastructure/authGuards.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
-import { getCategory } from "../categories.services.js";
+import { queryCategory } from "../categories.services.js";
 import { querySingle, transaction } from "../../../infrastructure/arangoUtils.js";
 import { aql } from "arangojs";
 import { DbCategory } from "../../../infrastructure/dbTypes.js";
@@ -16,7 +16,7 @@ export const updateCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
             categoriesCollection,
             category,
             isCategoryExists
-        } = await getCategory(context.db, args.originalName);
+        } = await queryCategory(context.db, args.originalName);
         if (!isCategoryExists)
             throw makeApplicationError("UpdateCategory_CategoryNotExists", GqlErrorCode.BadRequest);
 

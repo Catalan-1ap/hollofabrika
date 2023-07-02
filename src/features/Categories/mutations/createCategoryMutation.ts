@@ -3,7 +3,7 @@ import { makeApplicationError } from "../../../infrastructure/formatErrorHandler
 import { GqlErrorCode, GqlMutationResolvers, GqlRole } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { getAllProductsView, getProductsCollection } from "../categories.setup.js";
-import { getCategory } from "../categories.services.js";
+import { queryCategory } from "../categories.services.js";
 import { querySingle, transaction } from "../../../infrastructure/arangoUtils.js";
 import { Document } from "arangojs/documents.js";
 import { DbCategory } from "../../../infrastructure/dbTypes.js";
@@ -18,7 +18,7 @@ export const createCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
         const {
             categoriesCollection,
             isCategoryExists
-        } = await getCategory(context.db, args.name);
+        } = await queryCategory(context.db, args.name);
         if (isCategoryExists)
             throw makeApplicationError("CreateCategory_CategoryExists", GqlErrorCode.BadRequest);
 

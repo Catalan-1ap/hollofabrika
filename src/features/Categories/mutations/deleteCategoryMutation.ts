@@ -2,7 +2,7 @@ import { GqlErrorCode, GqlMutationResolvers, GqlRole } from "../../../infrastruc
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { roleGuard } from "../../../infrastructure/authGuards.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
-import { getCategory } from "../categories.services.js";
+import { queryCategory } from "../categories.services.js";
 import { querySingle, transaction } from "../../../infrastructure/arangoUtils.js";
 import { Document } from "arangojs/documents.js";
 import { DbCategory } from "../../../infrastructure/dbTypes.js";
@@ -17,7 +17,7 @@ export const deleteCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["
             categoriesCollection,
             category,
             isCategoryExists
-        } = await getCategory(context.db, args.name);
+        } = await queryCategory(context.db, args.name);
         if (!isCategoryExists)
             throw makeApplicationError("DeleteCategory_CategoryNotExists", GqlErrorCode.BadRequest);
 
