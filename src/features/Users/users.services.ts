@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { GqlJwtToken, GqlRole } from "../../infrastructure/gqlTypes.js";
+import * as crypto from "crypto";
 
 
 export type JwtPayload = {

@@ -53,7 +53,8 @@ const server = new ApolloServer<HollofabrikaContext>({
     resolvers: [scalarResolvers, idResolver, resolvers],
     formatError: formatErrorHandler,
     csrfPrevention: true,
-    cache: "bounded"
+    cache: "bounded",
+    introspection: true
 });
 await server.start();
 

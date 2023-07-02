@@ -8,6 +8,7 @@ import { querySingle, transaction } from "../../../infrastructure/arangoUtils.js
 import { Document } from "arangojs/documents.js";
 import { DbCategory } from "../../../infrastructure/dbTypes.js";
 import { aql } from "arangojs";
+import * as crypto from "crypto";
 
 
 export const createCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["createCategory"] =
