@@ -3,7 +3,7 @@ import { querySingle } from "../../../infrastructure/arangoUtils.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { GqlErrorCode, GqlMutationResolvers } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
-import { decodeToken, generateTokens } from "../users.services.js";
+import { decodeToken, generateRefreshTokenExpirationDate, generateTokens } from "../users.services.js";
 import { getRefreshTokensCollection } from "../users.setup.js";
 
 
@@ -32,7 +32,8 @@ export const refreshMutation: GqlMutationResolvers<HollofabrikaContext>["refresh
 
 		await refreshTokensCollection.save({
 			token: tokens.refresh,
-			userId: payload.userId
+			userId: payload.userId,
+			expireAt: generateRefreshTokenExpirationDate()
 		});
 
 		return {

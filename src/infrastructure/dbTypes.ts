@@ -33,7 +33,8 @@ export type DbUser = {
 
 export type DbRefreshToken = {
     token: string,
-    userId: string
+    userId: string,
+    expireAt: string
 }
 
 export interface DbTemporalToken {

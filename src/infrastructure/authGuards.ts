@@ -16,5 +16,5 @@ export function roleGuard(context: HollofabrikaContext, role: GqlRole): asserts 
 	user: JwtPayload
 } {
 	if (!context.user || context?.user?.role !== role)
-		throw makeApplicationError("Unauthorized", GqlErrorCode.BadRequest);
+		throw makeApplicationError("Forbidden", GqlErrorCode.BadRequest);
 }

@@ -5,7 +5,7 @@ import { querySingle } from "../../../infrastructure/arangoUtils.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { GqlErrorCode, GqlMutationResolvers } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
-import { comparePassword, generateTokens } from "../users.services.js";
+import { comparePassword, generateRefreshTokenExpirationDate, generateTokens } from "../users.services.js";
 import { getRefreshTokensCollection, getUsersCollection } from "../users.setup.js";
 
 
@@ -33,7 +33,8 @@ export const loginMutation: GqlMutationResolvers<HollofabrikaContext>["login"] =
         const refreshTokensCollection = await getRefreshTokensCollection(context.db);
         await refreshTokensCollection.save({
             token: tokens.refresh,
-            userId: user._id
+            userId: user._id,
+            expireAt: generateRefreshTokenExpirationDate()
         });
 
         return {

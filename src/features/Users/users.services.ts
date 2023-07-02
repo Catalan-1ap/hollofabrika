@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { GqlJwtToken, GqlRole } from "../../infrastructure/gqlTypes.js";
 import * as crypto from "crypto";
+import ms from "ms";
 
 
 export type JwtPayload = {
@@ -11,7 +12,11 @@ export type JwtPayload = {
 
 export function decodeToken(token: string): JwtPayload | undefined {
 	try {
-		return jwt.verify(token, process.env.JWT_SIGNATURE!) as JwtPayload;
+		const decoded = jwt.verify(token, process.env.JWT_SIGNATURE!) as JwtPayload;
+		return {
+			userId: decoded.userId,
+			role: decoded.role
+		};
 	} catch (e) {
 		return undefined;
 	}
@@ -34,10 +39,17 @@ export async function hashPassword(password: string) {
 	return await bcrypt.hash(password, 10);
 }
 
+
 export async function comparePassword(password: string, hash: string) {
 	return await bcrypt.compare(password, hash);
 }
 
+
 export function generateNumberToken() {
 	return Math.floor(Math.random() * 899999 + 100000);
+}
+
+
+export function generateRefreshTokenExpirationDate() {
+	return new Date(Date.now() + ms(process.env.JWT_REFRESH_EXPIRE!)).toISOString();
 }
