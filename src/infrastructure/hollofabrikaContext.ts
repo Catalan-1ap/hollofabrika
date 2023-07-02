@@ -16,7 +16,7 @@ export interface HollofabrikaContext {
 export const contextHandler: ContextFunction<[KoaContextFunctionArgument], HollofabrikaContext> =
     async ({ ctx }): Promise<HollofabrikaContext> => {
         const contextValue: HollofabrikaContext = {
-            db: connectToDb(),
+            db: await connectToDb(),
             koaContext: ctx
         };
 
