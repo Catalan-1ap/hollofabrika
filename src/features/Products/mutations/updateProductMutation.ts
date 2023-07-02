@@ -112,10 +112,5 @@ async function updateCovers(
         .filter(x => coversNamesToDelete?.includes(x))
     );
 
-    productToInsert.coversFileNames?.push(...oldProduct
-        .coversFileNames
-        .filter(x => !coversNamesToDelete?.includes(x))
-    );
-
     return saveCoversResult;
 }
