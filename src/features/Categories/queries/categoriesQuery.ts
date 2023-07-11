@@ -1,4 +1,4 @@
-import { GqlCategory, GqlQueryResolvers } from "../../../infrastructure/gqlTypes.js";
+import { GqlQueryCategory, GqlQueryResolvers } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
 import { getCategoriesCollection } from "../categories.setup.js";
 import { queryAll } from "../../../infrastructure/arangoUtils.js";
@@ -9,7 +9,7 @@ export const categoriesQuery: GqlQueryResolvers<HollofabrikaContext>["categories
     async (_, args, context) => {
         const categoriesCollection = getCategoriesCollection(context.db);
 
-        const { items } = await queryAll<GqlCategory>(context.db, aql`
+        const { items } = await queryAll<GqlQueryCategory>(context.db, aql`
             for doc in ${categoriesCollection}
             let attributes = (
                 for attr in doc.attributes

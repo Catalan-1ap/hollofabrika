@@ -2,13 +2,13 @@ import { roleGuard } from "../../../infrastructure/authGuards.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { GqlErrorCode, GqlMutationResolvers, GqlRole } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
-import { getAllProductsView, getProductsCollection } from "../categories.setup.js";
 import { queryCategory } from "../categories.services.js";
 import { querySingle, transaction } from "../../../infrastructure/arangoUtils.js";
 import { Document } from "arangojs/documents.js";
 import { DbCategory } from "../../../infrastructure/dbTypes.js";
 import { aql } from "arangojs";
 import * as crypto from "crypto";
+import { getAllProductsView, getProductsCollection } from "../../Products/products.setup.js";
 
 
 export const createCategoryMutation: GqlMutationResolvers<HollofabrikaContext>["createCategory"] =

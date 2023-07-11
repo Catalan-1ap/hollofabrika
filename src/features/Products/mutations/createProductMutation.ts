@@ -6,9 +6,14 @@ import { queryCategory } from "../../Categories/categories.services.js";
 import { DbCategory, DbProduct, DbProductAttribute } from "../../../infrastructure/dbTypes.js";
 import { aql } from "arangojs";
 import { querySingle, transaction } from "../../../infrastructure/arangoUtils.js";
-import { saveProductCover } from "../products.services.js";
 import { TransactionRecovery } from "../../../infrastructure/transactionRecovery.js";
 import { Document } from "arangojs/documents.js";
+import { nanoid } from "nanoid";
+import path from "path";
+import { productsCoversPath } from "../productsConstants.js";
+import fs from "fs";
+import { catcherDeleteFile, finalizeWritableStream } from "../../../infrastructure/filesUtils.js";
+import { pipeline } from "stream/promises";
 
 
 export const createProductMutation: GqlMutationResolvers<HollofabrikaContext>["createProduct"] =
@@ -104,6 +109,29 @@ export async function saveCovers(covers: Scalars["Upload"][]) {
 
     return {
         coversFileNames,
+        transactionRecovery
+    };
+}
+
+
+async function saveProductCover(file: Scalars["Upload"]["file"], coverName?: string) {
+    const coverFile = await file;
+
+    coverName ??= `${nanoid()}${path.extname(coverFile?.filename ?? "somethingwentwrong")}`;
+    const transactionRecovery = new TransactionRecovery();
+
+    const coverPath = path.join(productsCoversPath, coverName);
+    const localCoverStream = fs.createWriteStream(coverPath);
+
+    transactionRecovery.merge(new TransactionRecovery({
+        finalizers: [finalizeWritableStream(localCoverStream)],
+        catchers: [catcherDeleteFile(coverPath)]
+    }));
+
+    await pipeline(coverFile.createReadStream(), localCoverStream);
+
+    return {
+        coverName: coverName,
         transactionRecovery
     };
 }

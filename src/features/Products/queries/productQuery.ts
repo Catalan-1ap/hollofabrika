@@ -1,10 +1,11 @@
 import { GqlErrorCode, GqlProduct, GqlQueryResolvers } from "../../../infrastructure/gqlTypes.js";
 import { HollofabrikaContext } from "../../../infrastructure/hollofabrikaContext.js";
-import { getAllProductsView, getCategoriesCollection } from "../../Categories/categories.setup.js";
 import { aql } from "arangojs";
 import { querySingle } from "../../../infrastructure/arangoUtils.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { makeCoversUrls } from "../products.services.js";
+import { getAllProductsView } from "../products.setup.js";
+import { getCategoriesCollection } from "../../Categories/categories.setup.js";
 
 
 export const productQuery: GqlQueryResolvers<HollofabrikaContext>["product"] =

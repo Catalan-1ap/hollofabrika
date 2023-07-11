@@ -39,16 +39,16 @@ export type Scalars = {
   IPv6: any;
   ISBN: any;
   ISO8601Duration: any;
-  Id: string;
-  JSON: any;
-  JSONObject: Record<string, any>;
-  JWT: any;
-  LCCSubclass: any;
-  Latitude: any;
-  LocalDate: any;
-  LocalDateTime: any;
-  LocalEndTime: any;
-  LocalTime: any;
+    Id: string;
+    JSON: any;
+    JSONObject: Record<string, any>;
+    JWT: any;
+    LCCSubclass: any;
+    Latitude: any;
+    LocalDate: any;
+    LocalDateTime: any;
+    LocalEndTime: any;
+    LocalTime: any;
     Locale: any;
     Long: any;
     Longitude: any;
@@ -91,19 +91,15 @@ export type Scalars = {
     Void: any;
 };
 
-export type GqlAttribute = {
-    count: Scalars["Int"];
-    value: Scalars["String"];
-};
-
 export type GqlCategory = {
     attributes: Array<Maybe<GqlCategoryAttribute>>;
     name: Scalars["String"];
 };
 
 export type GqlCategoryAttribute = {
+    count: Scalars["Int"];
     name: Scalars["String"];
-    values?: Maybe<Array<GqlAttribute>>;
+    value: Scalars["String"];
 };
 
 export type GqlCreateProductArgs = {
@@ -260,10 +256,10 @@ export type GqlProductsQueryResult = {
 };
 
 export type GqlQuery = {
-  categories: Array<GqlCategory>;
-  currentUser: GqlUser;
-  product: GqlProduct;
-  products: GqlProductsQueryResult;
+    categories: Array<GqlQueryCategory>;
+    currentUser: GqlUser;
+    product: GqlProduct;
+    products: GqlProductsQueryResult;
 };
 
 
@@ -273,7 +269,22 @@ export type GqlQueryProductArgs = {
 
 
 export type GqlQueryProductsArgs = {
-  input?: InputMaybe<GqlProductsQueryInput>;
+    input?: InputMaybe<GqlProductsQueryInput>;
+};
+
+export type GqlQueryAttribute = {
+    count: Scalars["Int"];
+    value: Scalars["String"];
+};
+
+export type GqlQueryCategory = {
+    attributes: Array<Maybe<GqlQueryCategoryAttribute>>;
+    name: Scalars["String"];
+};
+
+export type GqlQueryCategoryAttribute = {
+    name: Scalars["String"];
+    values?: Maybe<Array<GqlQueryAttribute>>;
 };
 
 export type GqlRegisterResponse = {
@@ -385,7 +396,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type GqlResolversTypes = {
     AccountNumber: ResolverTypeWrapper<Scalars["AccountNumber"]>;
-    Attribute: ResolverTypeWrapper<GqlAttribute>;
     BigInt: ResolverTypeWrapper<Scalars["BigInt"]>;
     Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
     Byte: ResolverTypeWrapper<Scalars["Byte"]>;
@@ -456,6 +466,9 @@ export type GqlResolversTypes = {
     ProductsQueryInput: GqlProductsQueryInput;
     ProductsQueryResult: ResolverTypeWrapper<GqlProductsQueryResult>;
     Query: ResolverTypeWrapper<{}>;
+    QueryAttribute: ResolverTypeWrapper<GqlQueryAttribute>;
+    QueryCategory: ResolverTypeWrapper<GqlQueryCategory>;
+    QueryCategoryAttribute: ResolverTypeWrapper<GqlQueryCategoryAttribute>;
     RGB: ResolverTypeWrapper<Scalars["RGB"]>;
     RGBA: ResolverTypeWrapper<Scalars["RGBA"]>;
     RegisterResponse: ResolverTypeWrapper<GqlRegisterResponse>;
@@ -485,7 +498,6 @@ export type GqlResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type GqlResolversParentTypes = {
     AccountNumber: Scalars["AccountNumber"];
-    Attribute: GqlAttribute;
     BigInt: Scalars["BigInt"];
     Boolean: Scalars["Boolean"];
     Byte: Scalars["Byte"];
@@ -554,6 +566,9 @@ export type GqlResolversParentTypes = {
     ProductsQueryInput: GqlProductsQueryInput;
     ProductsQueryResult: GqlProductsQueryResult;
     Query: {};
+    QueryAttribute: GqlQueryAttribute;
+    QueryCategory: GqlQueryCategory;
+    QueryCategoryAttribute: GqlQueryCategoryAttribute;
     RGB: Scalars["RGB"];
     RGBA: Scalars["RGBA"];
     RegisterResponse: GqlRegisterResponse;
@@ -582,12 +597,6 @@ export interface GqlAccountNumberScalarConfig extends GraphQLScalarTypeConfig<Gq
     name: "AccountNumber";
 }
 
-export type GqlAttributeResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["Attribute"] = GqlResolversParentTypes["Attribute"]> = {
-    count?: Resolver<GqlResolversTypes["Int"], ParentType, ContextType>;
-    value?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
-    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export interface GqlBigIntScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["BigInt"], any> {
     name: "BigInt";
 }
@@ -603,8 +612,9 @@ export type GqlCategoryResolvers<ContextType = any, ParentType extends GqlResolv
 };
 
 export type GqlCategoryAttributeResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["CategoryAttribute"] = GqlResolversParentTypes["CategoryAttribute"]> = {
+    count?: Resolver<GqlResolversTypes["Int"], ParentType, ContextType>;
     name?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
-    values?: Resolver<Maybe<Array<GqlResolversTypes["Attribute"]>>, ParentType, ContextType>;
+    value?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -861,10 +871,28 @@ export type GqlProductsQueryResultResolvers<ContextType = any, ParentType extend
 };
 
 export type GqlQueryResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["Query"] = GqlResolversParentTypes["Query"]> = {
-    categories?: Resolver<Array<GqlResolversTypes["Category"]>, ParentType, ContextType>;
+    categories?: Resolver<Array<GqlResolversTypes["QueryCategory"]>, ParentType, ContextType>;
     currentUser?: Resolver<GqlResolversTypes["User"], ParentType, ContextType>;
     product?: Resolver<GqlResolversTypes["Product"], ParentType, ContextType, RequireFields<GqlQueryProductArgs, "id">>;
     products?: Resolver<GqlResolversTypes["ProductsQueryResult"], ParentType, ContextType, Partial<GqlQueryProductsArgs>>;
+};
+
+export type GqlQueryAttributeResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["QueryAttribute"] = GqlResolversParentTypes["QueryAttribute"]> = {
+    count?: Resolver<GqlResolversTypes["Int"], ParentType, ContextType>;
+    value?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GqlQueryCategoryResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["QueryCategory"] = GqlResolversParentTypes["QueryCategory"]> = {
+    attributes?: Resolver<Array<Maybe<GqlResolversTypes["QueryCategoryAttribute"]>>, ParentType, ContextType>;
+    name?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GqlQueryCategoryAttributeResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["QueryCategoryAttribute"] = GqlResolversParentTypes["QueryCategoryAttribute"]> = {
+    name?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
+    values?: Resolver<Maybe<Array<GqlResolversTypes["QueryAttribute"]>>, ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export interface GqlRgbScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["RGB"], any> {
@@ -875,9 +903,9 @@ export interface GqlRgbaScalarConfig extends GraphQLScalarTypeConfig<GqlResolver
     name: "RGBA";
 }
 
-export type GqlRegisterResponseResolvers<ContextType = any, ParentType extends GqlResolversParentTypes['RegisterResponse'] = GqlResolversParentTypes['RegisterResponse']> = {
-  confirmToken?: Resolver<Maybe<GqlResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+export type GqlRegisterResponseResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["RegisterResponse"] = GqlResolversParentTypes["RegisterResponse"]> = {
+    confirmToken?: Resolver<Maybe<GqlResolversTypes["String"]>, ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export interface GqlRoutingNumberScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['RoutingNumber'], any> {
@@ -955,7 +983,6 @@ export interface GqlVoidScalarConfig extends GraphQLScalarTypeConfig<GqlResolver
 
 export type GqlResolvers<ContextType = any> = {
     AccountNumber?: GraphQLScalarType;
-    Attribute?: GqlAttributeResolvers<ContextType>;
     BigInt?: GraphQLScalarType;
     Byte?: GraphQLScalarType;
     Category?: GqlCategoryResolvers<ContextType>;
@@ -966,16 +993,16 @@ export type GqlResolvers<ContextType = any> = {
     DID?: GraphQLScalarType;
     Date?: GraphQLScalarType;
     DateTime?: GraphQLScalarType;
-  DateTimeISO?: GraphQLScalarType;
-  DeweyDecimal?: GraphQLScalarType;
-  Duration?: GraphQLScalarType;
-  EmailAddress?: GraphQLScalarType;
-  Error?: GqlErrorResolvers<ContextType>;
-  GUID?: GraphQLScalarType;
-  HSL?: GraphQLScalarType;
-  HSLA?: GraphQLScalarType;
-  HexColorCode?: GraphQLScalarType;
-  Hexadecimal?: GraphQLScalarType;
+    DateTimeISO?: GraphQLScalarType;
+    DeweyDecimal?: GraphQLScalarType;
+    Duration?: GraphQLScalarType;
+    EmailAddress?: GraphQLScalarType;
+    Error?: GqlErrorResolvers<ContextType>;
+    GUID?: GraphQLScalarType;
+    HSL?: GraphQLScalarType;
+    HSLA?: GraphQLScalarType;
+    HexColorCode?: GraphQLScalarType;
+    Hexadecimal?: GraphQLScalarType;
   IBAN?: GraphQLScalarType;
   IP?: GraphQLScalarType;
   IPCPatent?: GraphQLScalarType;
@@ -1007,26 +1034,29 @@ export type GqlResolvers<ContextType = any> = {
   NonPositiveFloat?: GraphQLScalarType;
   NonPositiveInt?: GraphQLScalarType;
   ObjectID?: GraphQLScalarType;
-  PageData?: GqlPageDataResolvers<ContextType>;
-  PhoneNumber?: GraphQLScalarType;
-  Port?: GraphQLScalarType;
-  PositiveFloat?: GraphQLScalarType;
-  PositiveInt?: GraphQLScalarType;
-  PostalCode?: GraphQLScalarType;
-  Product?: GqlProductResolvers<ContextType>;
-  ProductAttribute?: GqlProductAttributeResolvers<ContextType>;
-  ProductsQueryResult?: GqlProductsQueryResultResolvers<ContextType>;
-  Query?: GqlQueryResolvers<ContextType>;
-  RGB?: GraphQLScalarType;
-  RGBA?: GraphQLScalarType;
-  RegisterResponse?: GqlRegisterResponseResolvers<ContextType>;
-  RoutingNumber?: GraphQLScalarType;
-  SafeInt?: GraphQLScalarType;
-  SemVer?: GraphQLScalarType;
-  SomethingWentWrong?: GqlSomethingWentWrongResolvers<ContextType>;
-  Success?: GqlSuccessResolvers<ContextType>;
-  Time?: GraphQLScalarType;
-  TimeZone?: GraphQLScalarType;
+    PageData?: GqlPageDataResolvers<ContextType>;
+    PhoneNumber?: GraphQLScalarType;
+    Port?: GraphQLScalarType;
+    PositiveFloat?: GraphQLScalarType;
+    PositiveInt?: GraphQLScalarType;
+    PostalCode?: GraphQLScalarType;
+    Product?: GqlProductResolvers<ContextType>;
+    ProductAttribute?: GqlProductAttributeResolvers<ContextType>;
+    ProductsQueryResult?: GqlProductsQueryResultResolvers<ContextType>;
+    Query?: GqlQueryResolvers<ContextType>;
+    QueryAttribute?: GqlQueryAttributeResolvers<ContextType>;
+    QueryCategory?: GqlQueryCategoryResolvers<ContextType>;
+    QueryCategoryAttribute?: GqlQueryCategoryAttributeResolvers<ContextType>;
+    RGB?: GraphQLScalarType;
+    RGBA?: GraphQLScalarType;
+    RegisterResponse?: GqlRegisterResponseResolvers<ContextType>;
+    RoutingNumber?: GraphQLScalarType;
+    SafeInt?: GraphQLScalarType;
+    SemVer?: GraphQLScalarType;
+    SomethingWentWrong?: GqlSomethingWentWrongResolvers<ContextType>;
+    Success?: GqlSuccessResolvers<ContextType>;
+    Time?: GraphQLScalarType;
+    TimeZone?: GraphQLScalarType;
   Timestamp?: GraphQLScalarType;
   URL?: GraphQLScalarType;
   USCurrency?: GraphQLScalarType;

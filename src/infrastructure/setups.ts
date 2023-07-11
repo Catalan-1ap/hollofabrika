@@ -48,7 +48,7 @@ export async function connectToDb() {
 async function setup(setups: SetupHandler[]) {
 	const db = await connectToDb();
 
-	await Promise.all(setups.map(z => z(db)));
+	await Promise.all(setups.map(z => z?.(db)));
 }
 
 
