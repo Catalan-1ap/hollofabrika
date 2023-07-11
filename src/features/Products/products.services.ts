@@ -2,12 +2,12 @@ import { aql } from "arangojs";
 import { HollofabrikaContext } from "../../infrastructure/hollofabrikaContext.js";
 import { nanoid } from "nanoid";
 import path from "path";
-import { productsCoversPath } from "../../infrastructure/constants.js";
 import fs from "fs";
 import { catcherDeleteFile, finalizeWritableStream } from "../../infrastructure/filesUtils.js";
 import { pipeline } from "stream/promises";
 import { Scalars } from "../../infrastructure/gqlTypes.js";
 import { TransactionRecovery } from "../../infrastructure/transactionRecovery.js";
+import { productsCoversPath, productsCoversWebPath } from "./productsConstants.js";
 
 
 export function makeCoversUrls(context: HollofabrikaContext) {
@@ -15,8 +15,7 @@ export function makeCoversUrls(context: HollofabrikaContext) {
         product.coversFileNames[* return
             concat_separator("/", 
                 ${context.koaContext.origin}, 
-                ${process.env.SERVER_STATIC_ROOT_SEGMENT}, 
-                ${process.env.SERVER_STATIC_COVERS_SEGMENT}, 
+                ${productsCoversWebPath}, 
                 CURRENT || ${process.env.SERVER_STATIC_FALLBACK_FILENAME}
             )
         ]

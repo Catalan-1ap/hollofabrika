@@ -1,5 +1,5 @@
 type Query {
-    categories: [Category!]!
+    categories: [QueryCategory!]!
 }
 
 type Mutation {
@@ -15,10 +15,21 @@ type Category {
 
 type CategoryAttribute {
     name: String!
-    values: [Attribute!]
+    value: String!
+    count: Int!
 }
 
-type Attribute {
+type QueryCategory {
+    name: String!
+    attributes: [QueryCategoryAttribute]!
+}
+
+type QueryCategoryAttribute {
+    name: String!
+    values: [QueryAttribute!]
+}
+
+type QueryAttribute {
     value: String!
     count: Int!
 }

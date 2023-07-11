@@ -8,8 +8,8 @@ import { Document } from "arangojs/documents.js";
 import { makeApplicationError } from "../../../infrastructure/formatErrorHandler.js";
 import { getCategoriesCollection } from "../../Categories/categories.setup.js";
 import path from "path";
-import { productsCoversPath } from "../../../infrastructure/constants.js";
 import fs from "fs/promises";
+import { productsCoversPath } from "../productsConstants.js";
 
 
 export const deleteProductMutation: GqlMutationResolvers<HollofabrikaContext>["deleteProduct"] =
