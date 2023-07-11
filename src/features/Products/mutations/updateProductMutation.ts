@@ -46,12 +46,12 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
             write: [productsCollection],
             exclusive: [categoriesCollection]
         }, async trx => {
-            const updateCoversResult = await updateCovers(
+            const { updatedCovers, updateCoversResult } = await updateCovers(
                 oldProduct,
-                productToInsert,
                 args.product.covers ?? [],
                 args.product.coversNamesToDelete
             );
+            productToInsert.coversFileNames = updatedCovers;
 
             const result = await trx.step(() =>
                 querySingle<{
@@ -95,7 +95,6 @@ export const updateProductMutation: GqlMutationResolvers<HollofabrikaContext>["u
 
 async function updateCovers(
     oldProduct: DbProduct,
-    productToInsert: Partial<DbProduct>,
     newCovers: Scalars["Upload"][],
     coversNamesToDelete?: string[]
 ) {
@@ -105,17 +104,17 @@ async function updateCovers(
     );
 
     const saveCoversResult = await saveCovers(newCovers);
-    productToInsert.coversFileNames?.push(...saveCoversResult.coversFileNames);
+    const updatedCovers: string[] = [];
 
-    productToInsert.coversFileNames?.push(...oldProduct
+    updatedCovers.push(...saveCoversResult.coversFileNames);
+
+    const untouchedExistedCovers = oldProduct
         .coversFileNames
-        .filter(x => coversNamesToDelete?.includes(x))
-    );
+        .filter(x => !coversNamesToDelete?.includes(x));
+    updatedCovers.push(...untouchedExistedCovers);
 
-    productToInsert.coversFileNames?.push(...oldProduct
-        .coversFileNames
-        .filter(x => !coversNamesToDelete?.includes(x))
-    );
-
-    return saveCoversResult;
+    return {
+        updatedCovers,
+        updateCoversResult: saveCoversResult
+    };
 }
