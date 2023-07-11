@@ -15,6 +15,10 @@ type Category {
 
 type CategoryAttribute {
     name: String!
+    values: [Attribute!]
+}
+
+type Attribute {
     value: String!
     count: Int!
 }

@@ -49,16 +49,16 @@ export type Scalars = {
   LocalDateTime: any;
   LocalEndTime: any;
   LocalTime: any;
-  Locale: any;
-  Long: any;
-  Longitude: any;
-  MAC: any;
-  NegativeFloat: any;
-  NegativeInt: any;
-  NonEmptyString: any;
-  NonNegativeFloat: any;
-  NonNegativeInt: any;
-  NonPositiveFloat: any;
+    Locale: any;
+    Long: any;
+    Longitude: any;
+    MAC: any;
+    NegativeFloat: any;
+    NegativeInt: any;
+    NonEmptyString: any;
+    NonNegativeFloat: any;
+    NonNegativeInt: any;
+    NonPositiveFloat: any;
     NonPositiveInt: any;
     ObjectID: any;
     PhoneNumber: any;
@@ -91,15 +91,19 @@ export type Scalars = {
     Void: any;
 };
 
+export type GqlAttribute = {
+    count: Scalars["Int"];
+    value: Scalars["String"];
+};
+
 export type GqlCategory = {
     attributes: Array<Maybe<GqlCategoryAttribute>>;
     name: Scalars["String"];
 };
 
 export type GqlCategoryAttribute = {
-    count: Scalars["Int"];
     name: Scalars["String"];
-    value: Scalars["String"];
+    values?: Maybe<Array<GqlAttribute>>;
 };
 
 export type GqlCreateProductArgs = {
@@ -381,6 +385,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type GqlResolversTypes = {
     AccountNumber: ResolverTypeWrapper<Scalars["AccountNumber"]>;
+    Attribute: ResolverTypeWrapper<GqlAttribute>;
     BigInt: ResolverTypeWrapper<Scalars["BigInt"]>;
     Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
     Byte: ResolverTypeWrapper<Scalars["Byte"]>;
@@ -480,6 +485,7 @@ export type GqlResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type GqlResolversParentTypes = {
     AccountNumber: Scalars["AccountNumber"];
+    Attribute: GqlAttribute;
     BigInt: Scalars["BigInt"];
     Boolean: Scalars["Boolean"];
     Byte: Scalars["Byte"];
@@ -572,9 +578,15 @@ export type GqlResolversParentTypes = {
     Void: Scalars["Void"];
 };
 
-export interface GqlAccountNumberScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes['AccountNumber'], any> {
-  name: 'AccountNumber';
+export interface GqlAccountNumberScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["AccountNumber"], any> {
+    name: "AccountNumber";
 }
+
+export type GqlAttributeResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["Attribute"] = GqlResolversParentTypes["Attribute"]> = {
+    count?: Resolver<GqlResolversTypes["Int"], ParentType, ContextType>;
+    value?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export interface GqlBigIntScalarConfig extends GraphQLScalarTypeConfig<GqlResolversTypes["BigInt"], any> {
     name: "BigInt";
@@ -591,9 +603,8 @@ export type GqlCategoryResolvers<ContextType = any, ParentType extends GqlResolv
 };
 
 export type GqlCategoryAttributeResolvers<ContextType = any, ParentType extends GqlResolversParentTypes["CategoryAttribute"] = GqlResolversParentTypes["CategoryAttribute"]> = {
-    count?: Resolver<GqlResolversTypes["Int"], ParentType, ContextType>;
     name?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
-    value?: Resolver<GqlResolversTypes["String"], ParentType, ContextType>;
+    values?: Resolver<Maybe<Array<GqlResolversTypes["Attribute"]>>, ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -943,17 +954,18 @@ export interface GqlVoidScalarConfig extends GraphQLScalarTypeConfig<GqlResolver
 }
 
 export type GqlResolvers<ContextType = any> = {
-  AccountNumber?: GraphQLScalarType;
-  BigInt?: GraphQLScalarType;
-  Byte?: GraphQLScalarType;
-  Category?: GqlCategoryResolvers<ContextType>;
-  CategoryAttribute?: GqlCategoryAttributeResolvers<ContextType>;
-  CountryCode?: GraphQLScalarType;
-  Cuid?: GraphQLScalarType;
-  Currency?: GraphQLScalarType;
-  DID?: GraphQLScalarType;
-  Date?: GraphQLScalarType;
-  DateTime?: GraphQLScalarType;
+    AccountNumber?: GraphQLScalarType;
+    Attribute?: GqlAttributeResolvers<ContextType>;
+    BigInt?: GraphQLScalarType;
+    Byte?: GraphQLScalarType;
+    Category?: GqlCategoryResolvers<ContextType>;
+    CategoryAttribute?: GqlCategoryAttributeResolvers<ContextType>;
+    CountryCode?: GraphQLScalarType;
+    Cuid?: GraphQLScalarType;
+    Currency?: GraphQLScalarType;
+    DID?: GraphQLScalarType;
+    Date?: GraphQLScalarType;
+    DateTime?: GraphQLScalarType;
   DateTimeISO?: GraphQLScalarType;
   DeweyDecimal?: GraphQLScalarType;
   Duration?: GraphQLScalarType;

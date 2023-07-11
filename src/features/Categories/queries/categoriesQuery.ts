@@ -11,9 +11,20 @@ export const categoriesQuery: GqlQueryResolvers<HollofabrikaContext>["categories
 
         const { items } = await queryAll<GqlCategory>(context.db, aql`
             for doc in ${categoriesCollection}
+            let attributes = (
+                for attr in doc.attributes
+                collect name = attr.name into groups = {
+                    value: attr.value,
+                    count: attr.count
+                }
+                return {
+                    name: name,
+                    values: groups
+                }
+            )
             return {
                 name: doc.name,
-                attributes: doc.attributes
+                attributes: attributes
             }
         `);
 
